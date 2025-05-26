@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package hertz.user;
+
+option go_package = "hertz/user";
+
+import "api.proto";
+import "common.proto";
+
+service UserService {
+  // 注册
+  rpc Register(RegisterReq) returns (common.Empty) {
+    option (api.post) = "/user/register";
+  }
+
+  // 登录
+  rpc Login(LoginReq) returns (common.Empty) {
+    option (api.post) = "/user/login";
+  }
+
+  // 退出登录
+  rpc Logout(LogoutReq) returns (common.Empty) {
+    option (api.post) = "/user/logout";
+  }
+
+  // 删除用户
+  rpc DeleteUser(DeleteUserReq) returns (common.Empty) {
+    option (api.delete) = "/user/:id";
+  }
+
+  // 更新用户信息
+  rpc UpdateUser(UpdateUserReq) returns (common.Empty) {
+    option (api.put) = "/user/:id";
+  }
+
+  // 获取用户信息
+  rpc GetUser(GetUserReq) returns (common.Empty) {
+    option (api.get) = "/user/:id";
+  }
+}
+
+message ResponseStatus {
+  bool status = 1;
+  string message = 2;
+}
+
+message RegisterReq {
+  string email = 1 [(api.form) = "email"];
+  string user_name = 2 [(api.form) = "user_name"];
+  string password = 3 [(api.form) = "password"];
+  string confirm_password = 4 [(api.form) = "confirm_password"];
+  int32 user_permissions = 5 [(api.form) = "user_permissions"]; // 0是用户，1是商家
+}
+
+message RegisterResp {
+  int64 user_id = 1;
+  ResponseStatus response_status = 2;
+}
+
+message LoginReq {
+  string email = 1 [(api.form) = "email"];
+  string password = 2 [(api.form) = "password"];
+}
+
+message LoginResp {
+  ResponseStatus response_status = 1;
+}
+
+message LogoutReq {
+  int64 user_id = 1 [(api.form) = "user_id"];
+}
+
+message LogoutResp {
+  ResponseStatus response_status = 1;
+}
+
+message DeleteUserReq {
+  int64 user_id = 1 [(api.path) = "id"];
+}
+
+message DeleteUserResp {
+  ResponseStatus response_status = 1;
+}
+
+message UpdateUserReq {
+  int64 user_id = 1 [(api.path) = "id"];
+  string new_email = 2 [(api.form) = "new_email"];
+  string new_user_name = 3 [(api.form) = "new_user_name"];
+  string current_password = 4 [(api.form) = "current_password"];
+  string new_password = 5 [(api.form) = "new_password"];
+}
+
+message UpdateUserResp {
+  ResponseStatus response_status = 1;
+}
+
+message GetUserReq {
+  int64 user_id = 1 [(api.path) = "id"];
+}
+
+message GetUserResp {
+  int64 user_id = 1;
+  string user_name = 2;
+  string email = 3;
+  string created_at = 4;
+  string updated_at = 5;
+  int32 user_permissions = 6;
+  ResponseStatus response_status = 7;
+}

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package hertz.common;
+
+option go_package="hertz/common";
+
+message Empty {}
