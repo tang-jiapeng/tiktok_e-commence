@@ -1,4 +1,4 @@
-package DAO
+package dao
 
 import (
 	"context"
@@ -57,7 +57,10 @@ func (dao *UserDAO) Cache() *redis.Client {
 	return dao.cache
 }
 
-// 插入数据
+func (dao *UserDAO) Insert(user *model.User) error {
+	return dao.db.Create(user).Error
+}
+
 func (dao *UserDAO) FindOne(ctx context.Context, userId int64) (*model.User, error) {
 	q := &model.User{
 		UserId: userId,

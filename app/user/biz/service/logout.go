@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
-	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
+	user_service "tiktok_e-commerce/rpc_gen/kitex_gen/user"
+
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type LogoutService struct {
@@ -13,8 +15,11 @@ func NewLogoutService(ctx context.Context) *LogoutService {
 }
 
 // Run create note info
-func (s *LogoutService) Run(req *user.LogoutReq) (resp *user.LogoutResp, err error) {
+func (s *LogoutService) Run(req *user_service.LogoutReq) (resp *user_service.LogoutResp, err error) {
 	// Finish your business logic.
 
-	return
+	klog.Info("用户退出登录成功！")
+	return &user_service.LogoutResp{
+		ResponseStatus: buildResponse("退出登录成功！", true),
+	}, nil
 }
