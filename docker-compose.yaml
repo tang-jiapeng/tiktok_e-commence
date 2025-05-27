@@ -5,11 +5,25 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=gorm
-      - MYSQL_USER=gorm
-      - MYSQL_PASSWORD=gorm
-      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./db/sql/ini:/docker-entrypoint-initdb.d
   redis:
-    image: 'redis:latest'
+    image: "redis:latest"
     ports:
       - 6379:6379
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.21
+    ports:
+      - 2379:2379
+      - 2380:2380
+    environment:
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+    volumes:
+      - etcd-data:/etcd-data
+
+volumes:
+  mysql-data:
+  redis-data:
+  etcd-data:

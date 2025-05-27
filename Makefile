@@ -15,4 +15,4 @@ gen-rpc:
 # 生成 API 代码
 .PHONY: gen-api
 gen-api:
-	@cd app/hertz && cwgo server --type HTTP --service hertz --module ${ROOT_MOD}/app/hertz --idl ../../idl/hertz/${service}.proto && go mod tidy
+	@cd app/hertz && cwgo server --type HTTP --service hertz --module ${ROOT_MOD}/app/hertz --idl ../../idl/hertz/user_api.proto && go mod tidy
