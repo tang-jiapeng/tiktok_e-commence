@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"tiktok_e-commerce/app/hertz/hertz_gen/hertz/user"
-	userrpcclent "tiktok_e-commerce/app/hertz/rpc_client/user_rpc"
+	"tiktok_e-commerce/app/hertz/rpc_client/user_rpc"
 	user_service "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 	userrpccl "tiktok_e-commerce/rpc_gen/rpc/user"
 
@@ -27,7 +27,7 @@ func (h *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	//}()
 	// todo edit your code
-	userrpcclent.InitUserRpcClient()
+	userrpcclient.InitUserRpcClient()
 	res, err := userrpccl.Register(h.Context, &user_service.RegisterReq{
 		Email:           req.Email,
 		UserName:        req.UserName,

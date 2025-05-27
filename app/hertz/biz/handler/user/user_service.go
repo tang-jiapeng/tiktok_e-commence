@@ -2,11 +2,9 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	"tiktok_e-commerce/app/hertz/biz/service"
 	"tiktok_e-commerce/app/hertz/biz/utils"
-	common "tiktok_e-commerce/app/hertz/hertz_gen/hertz/common"
 	user "tiktok_e-commerce/app/hertz/hertz_gen/hertz/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -23,8 +21,6 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-
-	fmt.Println("33333")
 
 	resp := &user.RegisterResp{}
 	resp, err = service.NewRegisterService(ctx, c).Run(&req)
@@ -47,14 +43,14 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
+	resp := &user.LoginResp{}
 	resp, err = service.NewLoginService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }
 
 // Logout .
@@ -68,14 +64,14 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
+	resp := &user.LogoutResp{}
 	resp, err = service.NewLogoutService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }
 
 // DeleteUser .
@@ -89,14 +85,14 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
+	resp := &user.DeleteUserResp{}
 	resp, err = service.NewDeleteUserService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }
 
 // UpdateUser .
@@ -110,14 +106,14 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
+	resp := &user.UpdateUserResp{}
 	resp, err = service.NewUpdateUserService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }
 
 // GetUser .
@@ -131,12 +127,12 @@ func GetUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
+	resp := &user.GetUserResp{}
 	resp, err = service.NewGetUserService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }

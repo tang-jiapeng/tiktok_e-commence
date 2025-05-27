@@ -2,10 +2,15 @@ package service
 
 import (
 	"context"
+	"log"
+
+	user "tiktok_e-commerce/app/hertz/hertz_gen/hertz/user"
+	"tiktok_e-commerce/app/hertz/rpc_client/user_rpc"
+	user_service "tiktok_e-commerce/rpc_gen/kitex_gen/user"
+	userrpccl "tiktok_e-commerce/rpc_gen/rpc/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	common "tiktok_e-commerce/app/hertz/hertz_gen/hertz/common"
-	user "tiktok_e-commerce/app/hertz/hertz_gen/hertz/user"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 type LoginService struct {
@@ -17,11 +22,33 @@ func NewLoginService(Context context.Context, RequestContext *app.RequestContext
 	return &LoginService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *LoginService) Run(req *user.LoginReq) (resp *common.Empty, err error) {
+func (h *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error) {
 	//defer func() {
 	// hlog.CtxInfof(h.Context, "req = %+v", req)
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	//}()
 	// todo edit your code
-	return
+
+	userrpcclient.InitUserRpcClient()
+	res, err := userrpccl.Login(h.Context, &user_service.LoginReq{
+		Email:    req.Email,
+		Password: req.Password,
+	})
+	if err != nil {
+		log.Printf("Failed to login user: %v", err)
+		h.RequestContext.JSON(consts.StatusBadRequest, &user.LoginResp{
+			ResponseStatus: &user.ResponseStatus{
+				Status:  false,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+	resp = &user.LoginResp{
+		ResponseStatus: &user.ResponseStatus{
+			Status:  res.ResponseStatus.Status,
+			Message: res.ResponseStatus.Message,
+		},
+	}
+	return resp, nil
 }

@@ -11,11 +11,6 @@ func rootMw() []app.HandlerFunc {
 	return nil
 }
 
-func _userMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
 func _deleteuserMw() []app.HandlerFunc {
 	// your code...
 	return nil
