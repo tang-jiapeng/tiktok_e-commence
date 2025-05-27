@@ -3,8 +3,9 @@
 package user
 
 import (
-	"github.com/cloudwego/hertz/pkg/app/server"
 	user "tiktok_e-commerce/app/hertz/biz/handler/user"
+
+	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 /*
@@ -17,13 +18,11 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	{
-		_user := root.Group("/user", _userMw()...)
-		_user.DELETE("/:id", append(_deleteuserMw(), user.DeleteUser)...)
-		_user.PUT("/:id", append(_updateuserMw(), user.UpdateUser)...)
-		_user.GET("/:id", append(_getuserMw(), user.GetUser)...)
-		_user.POST("/login", append(_loginMw(), user.Login)...)
-		_user.POST("/logout", append(_logoutMw(), user.Logout)...)
-		_user.POST("/register", append(_registerMw(), user.Register)...)
-	}
+	root.POST("/deleteuser", append(_deleteuserMw(), user.DeleteUser)...)
+	root.GET("/getuser", append(_getuserMw(), user.GetUser)...)
+	root.POST("/login", append(_loginMw(), user.Login)...)
+	root.POST("/logout", append(_logoutMw(), user.Logout)...)
+	root.POST("/register", append(_registerMw(), user.Register)...)
+	root.POST("/updateuser", append(_updateuserMw(), user.UpdateUser)...)
+
 }

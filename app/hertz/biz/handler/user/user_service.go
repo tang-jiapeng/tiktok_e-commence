@@ -2,13 +2,15 @@ package user
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"tiktok_e-commerce/app/hertz/biz/service"
 	"tiktok_e-commerce/app/hertz/biz/utils"
 	common "tiktok_e-commerce/app/hertz/hertz_gen/hertz/common"
 	user "tiktok_e-commerce/app/hertz/hertz_gen/hertz/user"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Register .
@@ -22,14 +24,16 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
+	fmt.Println("33333")
+
+	resp := &user.RegisterResp{}
 	resp, err = service.NewRegisterService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }
 
 // Login .

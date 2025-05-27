@@ -6,6 +6,10 @@ import (
 	"context"
 	"time"
 
+	"tiktok_e-commerce/app/hertz/biz/router"
+	"tiktok_e-commerce/app/hertz/conf"
+	"tiktok_e-commerce/app/hertz/rpc_client/rpc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -19,13 +23,12 @@ import (
 	"github.com/hertz-contrib/pprof"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"tiktok_e-commerce/app/hertz/biz/router"
-	"tiktok_e-commerce/app/hertz/conf"
 )
 
 func main() {
 	// init dal
 	// dal.Init()
+	rpc.InitClient()
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
 

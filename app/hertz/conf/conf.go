@@ -23,6 +23,7 @@ type Config struct {
 	Hertz Hertz `yaml:"hertz"`
 	MySQL MySQL `yaml:"mysql"`
 	Redis Redis `yaml:"redis"`
+	Registry Registry `yaml:"registry"`
 }
 
 type MySQL struct {
@@ -36,6 +37,13 @@ type Redis struct {
 	DB       int    `yaml:"db"`
 }
 
+
+type Registry struct {
+	RegistryAddress []string `yaml:"registry_address"`
+	Username        string   `yaml:"username"`
+	Password        string   `yaml:"password"`
+}
+
 type Hertz struct {
 	Service         string `yaml:"service"`
 	Address         string `yaml:"address"`
@@ -47,6 +55,7 @@ type Hertz struct {
 	LogMaxSize      int    `yaml:"log_max_size"`
 	LogMaxBackups   int    `yaml:"log_max_backups"`
 	LogMaxAge       int    `yaml:"log_max_age"`
+	RegistryAddr    string `yaml:"registry_addr"`
 }
 
 // GetConf gets configuration instance

@@ -20,7 +20,7 @@ func NewLoginService(ctx context.Context) *LoginService {
 func (s *LoginService) Run(req *user_service.LoginReq) (resp *user_service.LoginResp, err error) {
 	// Finish your business logic.
 
-	userDAO := dao.NewUserDAO()
+	userDAO := dao.GetUserDAO()
 	if userDAO == nil {
 		klog.Error("userDAO 未初始化!")
 		return &user_service.LoginResp{
