@@ -27,7 +27,7 @@ func (u *User) TableName() string {
 	return "user"
 }
 
-// GetCacheKey 返回用户缓存键，格式为 "users:UserId"
+// GetCacheKey 返回用户缓存键，格式为 "user:UserId"
 func (u *User) GetCacheKey() string {
 	return fmt.Sprintf("%s:%d", u.TableName(), u.UserId)
 }

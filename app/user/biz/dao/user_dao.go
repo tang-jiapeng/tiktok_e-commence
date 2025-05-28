@@ -49,8 +49,8 @@ func NewUserDAO() *UserDAO {
 	return instanceDAO
 }
 
-func (DAO *UserDAO) DB() *gorm.DB {
-	return DAO.db
+func (dao *UserDAO) DB() *gorm.DB {
+	return dao.db
 }
 
 func (dao *UserDAO) Cache() *redis.Client {

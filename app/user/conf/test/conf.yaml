@@ -17,7 +17,7 @@ mysql:
   dsn: "root:root@tcp(127.0.0.1:3306)/userdb?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
-  address: "127.0.0.1:6379"
+  address: "127.0.0.1:6378"
   username: ""
   password: ""
   db: 0
