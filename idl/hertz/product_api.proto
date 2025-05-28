@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package hertz.product;
+
+option go_package = "hertz/product";
+
+import "api.proto";
+import "common.proto";
+
+service ProductService {
+  rpc GetProduct (GetProductReq) returns (common.Empty) {
+    option (api.get) = "product/:id";
+  }
+
+  rpc SearchProducts(SearchProductsReq) returns (common.Empty) {
+    option (api.get) = "/products/search";
+  }
+  
+  rpc GetProductList (GetProductListReq) returns (common.Empty) {
+    option (api.get) = "/products";
+  }
+
+  rpc CreateProduct (CreateProductReq) returns (common.Empty) {
+    option (api.post) = "/product";
+  }
+
+  rpc DeleteProduct (DeleteProductReq) returns (common.Empty) {
+    option (api.delete) = "/product/:id";
+  }
+
+  rpc UpdateProduct(UpdateProductReq) returns (common.Empty) {
+    option (api.put) = "/product/:id";
+  }
+  
+}
+
+message GetProductReq {
+  uint32 product_id = 1 [(api.path) = "id"];
+}
+
+message SearchProductsReq {
+  string query = 2 [(api.query) = "query"];
+}
+
+message GetProductListReq {
+  uint32 page = 1 [(api.query) = "page"];
+  string category = 2 [(api.query) = "category"];
+}
+
+message CreateProductReq {
+  uint32 store_id = 1 [(api.form) = "store_id"];
+  string name = 2 [(api.form) = "name"];
+  string description = 3 [(api.form) = "description"];
+  string picture = 4 [(api.form) = "picture"];
+  float price = 5 [(api.form) = "price"];
+  float stock = 6 [(api.form) = "stock"];
+
+  repeated string categories = 7 [(api.form) = "categories"];
+}
+
+message DeleteProductReq {
+  uint32 product_id = 1 [(api.path) = "id"];
+  uint32 store_id = 2;
+}
+
+message UpdateProductReq {
+  uint32 id = 1 [(api.form) = "id"];
+  uint32 store_id = 2 [(api.form) = "store_id"];
+  string name = 3 [(api.form) = "name"];
+  string description = 4 [(api.form) = "description"];
+  string picture = 5 [(api.form) = "picture"];
+  float price = 6 [(api.form) = "price"];
+  float stock = 7 [(api.form) = "stock"];
+
+  repeated string categories = 8 [(api.form) = "categories"];
+}
