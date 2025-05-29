@@ -8,11 +8,10 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"tiktok_e-commerce/app/user/conf"
+	"tiktok_e-commerce/user/conf"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	etcdRegistry "github.com/kitex-contrib/registry-etcd"
 )
 
 func main() {
@@ -38,13 +37,6 @@ func kitexInit() (opts []server.Option) {
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
-
-	// 注册etcd
-	r , err := etcdRegistry.NewEtcdRegistry(conf.GetConf().Registry.RegistryAddress)
-	if err != nil {
-		panic(err)
-	}
-	opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()

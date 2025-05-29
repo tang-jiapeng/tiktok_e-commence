@@ -1,8 +1,8 @@
 package dal
 
 import (
-	"tiktok_e-commerce/app/user/biz/dal/mysql"
-	"tiktok_e-commerce/app/user/biz/dal/redis"
+	"tiktok_e-commerce/user/biz/dal/mysql"
+	"tiktok_e-commerce/user/biz/dal/redis"
 )
 
 func Init() {

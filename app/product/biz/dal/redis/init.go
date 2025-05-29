@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"tiktok_e-commerce/app/product/conf"
+	"tiktok_e-commerce/product/conf"
 )
 
 var (

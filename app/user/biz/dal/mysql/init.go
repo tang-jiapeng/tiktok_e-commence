@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	"tiktok_e-commerce/app/user/conf"
+	"tiktok_e-commerce/user/conf"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

@@ -1,4 +1,4 @@
-module tiktok_e-commerce/app/product
+module tiktok_e-commerce/product
 
 go 1.23.1
 

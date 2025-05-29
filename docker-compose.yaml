@@ -19,21 +19,10 @@ services:
       test: ["CMD", "redis-cli", "-p", "6378", "ping"]
       interval: 10s
       retries: 3
-  etcd:
-    image: quay.io/coreos/etcd:v3.5.21
-    ports:
-      - 2379:2379
-      - 2380:2380
-    environment:
-      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
-    volumes:
-      - etcd-data:/etcd-data
 
 volumes:
   mysql-data:
   redis-data:
-  etcd-data:
 
 networks:
   app-network:
