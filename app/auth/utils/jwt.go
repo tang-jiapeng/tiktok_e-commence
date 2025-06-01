@@ -15,7 +15,6 @@ import (
 var (
 	ctx                        = context.Background()
 	jwtSecret                  = []byte(conf.GetConf().Jwt.Secret)
-	redisClient                = redis.RedisClient
 	accessTokenExpireDuration  = time.Hour * 2
 	refreshTokenExpireDuration = time.Hour * 24 * 7
 )
@@ -30,11 +29,25 @@ const (
 )
 
 func GenerateRefreshToken(userId int32) (string, error) {
-	return generateJWT(userId, refreshTokenExpireDuration)
+	s, err := generateJWT(userId, refreshTokenExpireDuration)
+	if err == nil {
+		err = redis.RedisClient.Set(ctx, GetRefreshTokenKey(userId), s, refreshTokenExpireDuration).Err()
+		if err != nil {
+			return "", err
+		}
+	}
+	return s, nil
 }
 
 func GenerateAccessToken(userId int32) (string, error) {
-	return generateJWT(userId, accessTokenExpireDuration)
+	s, err := generateJWT(userId, accessTokenExpireDuration)
+	if err == nil {
+		err = redis.RedisClient.Set(ctx, GetAccessTokenKey(userId), s, accessTokenExpireDuration).Err()
+		if err != nil {
+			return "", err
+		}
+	}
+	return s, err
 }
 
 func generateJWT(userId int32, exp time.Duration) (string, error) {
@@ -67,7 +80,7 @@ func ParseJWT(tokenStr string) (jwt.MapClaims, int) {
 }
 
 func saveRefreshToken(userId int32, refreshToken string) error {
-	return redisClient.Set(ctx, GetRefreshTokenKey(userId), refreshToken, refreshTokenExpireDuration).Err()
+	return redis.RedisClient.Set(ctx, GetRefreshTokenKey(userId), refreshToken, refreshTokenExpireDuration).Err()
 }
 
 func refreshAccessToken(refreshToken string) (string, bool) {
@@ -81,7 +94,7 @@ func refreshAccessToken(refreshToken string) (string, bool) {
 	if err != nil {
 		return "", false
 	}
-	err = redisClient.Set(ctx, GetAccessTokenKey(userId), newAccessToken, accessTokenExpireDuration).Err()
+	err = redis.RedisClient.Set(ctx, GetAccessTokenKey(userId), newAccessToken, accessTokenExpireDuration).Err()
 	if err != nil {
 		return "", false
 	}

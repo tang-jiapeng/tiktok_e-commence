@@ -1,7 +1,6 @@
 package rpc
 
 import (
-	"fmt"
 	"os"
 	"sync"
 	"tiktok_e-commerce/common/clientsuite"
@@ -35,6 +34,5 @@ func initUserClient() {
 	if err != nil {
 		klog.Fatal("init user client failed: ", err)
 	}
-	fmt.Printf("init user client: %v\n", UserClient)
 }
 

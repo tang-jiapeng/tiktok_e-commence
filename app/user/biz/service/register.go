@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-	"tiktok_e-commerce/user/biz/dal/mysql"
 	"tiktok_e-commerce/common/constant"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
+	"tiktok_e-commerce/user/biz/dal/mysql"
 	"tiktok_e-commerce/user/biz/model"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -49,6 +49,10 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 			return nil, err
 		}
 	}
-	resp = &user.RegisterResp{UserId: newUser.ID}
-	return
+	resp = &user.RegisterResp{
+		StatusCode: 0,
+		StatusMsg:  constant.GetMsg(0),
+		UserId:     newUser.ID,
+	}
+	return resp, nil
 }
