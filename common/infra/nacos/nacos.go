@@ -1,7 +1,6 @@
 package nacos
 
 import (
-	"fmt"
 	"os"
 
 	kitexRigistry "github.com/cloudwego/kitex/pkg/registry"

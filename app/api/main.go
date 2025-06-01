@@ -6,6 +6,10 @@ import (
 	"context"
 	"time"
 
+	"tiktok_e-commerce/api/biz/router"
+	"tiktok_e-commerce/api/conf"
+	"tiktok_e-commerce/api/infra/rpc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -17,15 +21,19 @@ import (
 	"github.com/hertz-contrib/logger/accesslog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
 	"github.com/hertz-contrib/pprof"
+	"github.com/joho/godotenv"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"tiktok_e-commerce/api/biz/router"
-	"tiktok_e-commerce/api/conf"
 )
 
 func main() {
-	// init dal
-	// dal.Init()
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		hlog.Warn("Failed to load .env file: %v", err)
+	}
+
+	rpc.InitClient()
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
 

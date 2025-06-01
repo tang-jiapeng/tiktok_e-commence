@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 	"errors"
-	"tiktok_e-commerce/api/biz/dal/mysql"
+	"log"
+	"tiktok_e-commerce/user/biz/dal/mysql"
 	"tiktok_e-commerce/common/constant"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 	"tiktok_e-commerce/user/biz/model"
@@ -22,7 +23,6 @@ func NewRegisterService(ctx context.Context) *RegisterService {
 
 // Run create note info
 func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, err error) {
-	// Finish your business logic.
 
 	if req.Password != req.ConfirmPassword {
 		resp = &user.RegisterResp{
@@ -36,6 +36,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 		Email:    req.Email,
 		Password: string(hashedPassword),
 	}
+
 	if err = model.Create(mysql.DB, s.ctx, newUser); err != nil {
 		klog.Error(err)
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
@@ -50,5 +51,6 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 		}
 	}
 	resp = &user.RegisterResp{UserId: int32(newUser.ID)}
+	log.Printf("register success: %v", resp)
 	return
 }

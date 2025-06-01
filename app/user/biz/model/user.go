@@ -22,6 +22,6 @@ func GetByEmail(db *gorm.DB, ctx context.Context, email string) (user *User, err
 }
 
 func Create(db *gorm.DB, ctx context.Context, user *User) error {
-	result := db.Create(user)
+	result := db.WithContext(ctx).Create(user)
 	return result.Error
 }
