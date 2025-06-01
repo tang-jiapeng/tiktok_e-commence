@@ -1,29 +1,55 @@
 version: '3'
 services:
   mysql:
-    image: 'mysql:latest'
+    image: mysql:latest
     ports:
-      - 3306:3306
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
+      - mysql-data:/var/lib/mysql
       - ./db/sql/ini:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      retries: 3
+
   redis:
     image: redis:latest
     ports:
-      - "6378:6378" # 主机端口:容器端口
+      - "6378:6378"
     networks:
       - app-network
-    command: redis-server --port 6378 # 确保容器内 Redis 使用 6378 端口
+    command: redis-server --port 6378
     healthcheck:
       test: ["CMD", "redis-cli", "-p", "6378", "ping"]
       interval: 10s
       retries: 3
 
-volumes:
-  mysql-data:
-  redis-data:
+  nacos:
+    image: nacos/nacos-server:2.0.2 # 使用特定版本
+    environment:
+      - MODE=standalone
+      - NACOS_AUTH_ENABLE=false
+      - NACOS_SERVER_USERNAME=nacos
+      - NACOS_SERVER_PASSWORD=${NACOS_PASSWORD:-nacos}
+    ports:
+      - "8848:8848"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s # 给 Nacos 更多启动时间
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mysql-data:
+  nacos-data:

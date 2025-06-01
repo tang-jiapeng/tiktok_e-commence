@@ -4,17 +4,21 @@ import (
 	"net"
 	"time"
 
+	"tiktok_e-commerce/cart/conf"
+	// "tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/product/biz/dal"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/cart/cartservice"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"tiktok_e-commerce/cart/conf"
-	"tiktok_e-commerce/rpc_gen/kitex_gen/cart/cartservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
+	dal.Init()
 	opts := kitexInit()
 
 	svr := cartservice.NewServer(new(CartServiceImpl), opts...)
@@ -37,6 +41,9 @@ func kitexInit() (opts []server.Option) {
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
+
+	// r := nacos.RegisterService()
+	// opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()

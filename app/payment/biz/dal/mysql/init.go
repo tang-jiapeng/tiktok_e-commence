@@ -16,7 +16,7 @@ func Init() {
 	DB, err = gorm.Open(mysql.Open(conf.GetConf().MySQL.DSN),
 		&gorm.Config{
 			PrepareStmt:            true,
-			SkipDefaultTransaction: true,
+			TranslateError: true,
 		},
 	)
 	if err != nil {

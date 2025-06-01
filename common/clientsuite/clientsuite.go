@@ -1,11 +1,13 @@
 package clientsuite
 
 import (
+	"tiktok_e-commerce/common/infra/nacos"
+
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
-	etcd "github.com/kitex-contrib/registry-etcd"
+	"github.com/kitex-contrib/registry-nacos/resolver"
 )
 
 type CommonGrpcClientSuite struct {
@@ -14,10 +16,7 @@ type CommonGrpcClientSuite struct {
 }
 
 func (s CommonGrpcClientSuite) Options() []client.Option {
-	r, err := etcd.NewEtcdResolver([]string{s.RegistryAddr})
-	if err != nil {
-		panic(err)
-	}
+	r := resolver.NewNacosResolver(nacos.GetNamingClient())
 	opts := []client.Option{
 		client.WithResolver(r),
 		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
@@ -28,7 +27,6 @@ func (s CommonGrpcClientSuite) Options() []client.Option {
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 			ServiceName: s.CurrentServiceName,
 		}),
-		// client.WithSuite(tracing.NewClientSuite()),
 	)
 
 	return opts
