@@ -3,8 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"log"
-
 	user "tiktok_e-commerce/api/hertz_gen/api/user"
 	"tiktok_e-commerce/api/infra/rpc"
 
@@ -25,7 +23,6 @@ func NewRegisterService(Context context.Context, RequestContext *app.RequestCont
 
 func (h *RegisterService) Run(req *user.RegisterRequest) (resp *user.RegisterResponse, err error) {
 	client := rpc.UserClient
-	log.Printf("register request: %v", req)
 	res, err := client.Register(h.Context, &rpcuser.RegisterReq{
 		Email:           req.Email,
 		Password:        req.Password,
