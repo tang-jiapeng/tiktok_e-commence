@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 
+	"tiktok_e-commerce/api/biz/middleware"
 	"tiktok_e-commerce/api/biz/router"
 	"tiktok_e-commerce/api/conf"
 	"tiktok_e-commerce/api/infra/rpc"
@@ -36,6 +37,7 @@ func main() {
 	rpc.InitClient()
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
+	h.Use(middleware.AuthorizationMiddleware())
 
 	registerMiddleware(h)
 

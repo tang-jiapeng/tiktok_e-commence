@@ -158,7 +158,7 @@ ReadFieldError:
 }
 
 func (x *VerifyResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.StatusCode, offset, err = fastpb.ReadString(buf, _type)
+	x.StatusCode, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
@@ -267,10 +267,10 @@ func (x *VerifyResp) FastWrite(buf []byte) (offset int) {
 }
 
 func (x *VerifyResp) fastWriteField1(buf []byte) (offset int) {
-	if x.StatusCode == "" {
+	if x.StatusCode == 0 {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetStatusCode())
+	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetStatusCode())
 	return offset
 }
 
@@ -385,10 +385,10 @@ func (x *VerifyResp) Size() (n int) {
 }
 
 func (x *VerifyResp) sizeField1() (n int) {
-	if x.StatusCode == "" {
+	if x.StatusCode == 0 {
 		return n
 	}
-	n += fastpb.SizeString(1, x.GetStatusCode())
+	n += fastpb.SizeInt32(1, x.GetStatusCode())
 	return n
 }
 
