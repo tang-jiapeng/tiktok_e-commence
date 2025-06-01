@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"log"
 	"tiktok_e-commerce/user/biz/dal/mysql"
 	"tiktok_e-commerce/common/constant"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
@@ -50,7 +49,6 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 			return nil, err
 		}
 	}
-	resp = &user.RegisterResp{UserId: int32(newUser.ID)}
-	log.Printf("register success: %v", resp)
+	resp = &user.RegisterResp{UserId: newUser.ID}
 	return
 }

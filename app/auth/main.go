@@ -4,8 +4,9 @@ import (
 	"net"
 	"time"
 
+	"tiktok_e-commerce/auth/biz/dal"
 	"tiktok_e-commerce/auth/conf"
-	// "tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/common/infra/nacos"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth/authservice"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -24,6 +25,7 @@ func main() {
 		klog.Warn("Failed to load .env file: %v", err)
 	}
 
+	dal.Init()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)
@@ -47,8 +49,8 @@ func kitexInit() (opts []server.Option) {
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
 
-	// r := nacos.RegisterService()
-	// opts = append(opts, server.WithRegistry(r))
+	r := nacos.RegisterService()
+	opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()

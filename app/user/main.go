@@ -4,6 +4,7 @@ import (
 	"net"
 	"time"
 
+	"tiktok_e-commerce/user/biz/infra/rpc"
 	"tiktok_e-commerce/common/infra/nacos"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
 	"tiktok_e-commerce/user/biz/dal"
@@ -26,6 +27,7 @@ func main() {
 	}
 
 	dal.Init()
+	rpc.InitClient()
 	opts := kitexInit()
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
