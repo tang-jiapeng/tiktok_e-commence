@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"tiktok_e-commerce/auth/utils/jwt"
+	"tiktok_e-commerce/common/constant"
 	auth "tiktok_e-commerce/rpc_gen/kitex_gen/auth"
 )
 
@@ -25,7 +26,7 @@ func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.De
 	}
 	return &auth.DeliveryResp{
 		StatusCode:	0,
-		StatusMsg:	"success",
+		StatusMsg:	constant.GetMsg(0),
 		AccessToken:	accessToken,
 		RefreshToken:	refreshToken,
 	}, nil

@@ -34,7 +34,9 @@ message LoginResp {
   string refresh_token = 4;
 }
 
-message GetUserReq {}
+message GetUserReq {
+  int32 user_id = 1;
+}
 
 message GetUserResp {
   int32 status_code = 1;

@@ -3,8 +3,12 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/hertz/pkg/app"
 	user "tiktok_e-commerce/api/hertz_gen/api/user"
+	"tiktok_e-commerce/api/infra/rpc"
+	"tiktok_e-commerce/common/constant"
+	rpcuser "tiktok_e-commerce/rpc_gen/kitex_gen/user"
+
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 type GetUserInfoService struct {
@@ -17,10 +21,18 @@ func NewGetUserInfoService(Context context.Context, RequestContext *app.RequestC
 }
 
 func (h *GetUserInfoService) Run(req *user.Empty) (resp *user.GetUserInfoResponse, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
-	return
+	userClient := rpc.UserClient
+	ctx := h.Context
+	userInfo, err := userClient.GetUser(ctx, &rpcuser.GetUserReq{
+		UserId: ctx.Value("user_id").(int32),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &user.GetUserInfoResponse{
+		StatusCode: 0,
+		StatusMsg:  constant.GetMsg(0),
+		Email:      userInfo.User.Email,
+	}, nil
+
 }

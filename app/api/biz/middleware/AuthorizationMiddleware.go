@@ -29,8 +29,8 @@ func AuthorizationMiddleware() app.HandlerFunc {
 				if verifyResp.StatusCode != 0 {
 					c.JSON(consts.StatusOK, verifyResp)
 				}
+				ctx = context.WithValue(ctx, "user_id", verifyResp.UserId)
 			}
-
 		}
 		c.Next(ctx)
 	}
