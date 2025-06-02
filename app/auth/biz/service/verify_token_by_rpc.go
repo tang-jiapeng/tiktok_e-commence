@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"tiktok_e-commerce/auth/utils"
+	"tiktok_e-commerce/auth/utils/jwt"
 	"tiktok_e-commerce/auth/utils/redis"
 	"tiktok_e-commerce/common/constant"
 	auth "tiktok_e-commerce/rpc_gen/kitex_gen/auth"
@@ -18,8 +18,8 @@ func NewVerifyTokenByRPCService(ctx context.Context) *VerifyTokenByRPCService {
 // Run create note info
 func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.VerifyResp, err error) {
 	// 校验access token
-	_, jwtStatus := utils.ParseJWT(req.AccessToken)
-	if jwtStatus == utils.TokenValid {
+	_, jwtStatus := jwt.ParseJWT(req.AccessToken)
+	if jwtStatus == jwt.TokenValid {
 		savedAccessToken, err := redis.GetVal(s.ctx, req.AccessToken)
 		if err != nil {
 			return nil, err

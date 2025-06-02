@@ -1,14 +1,14 @@
-package utils
+package jwt
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"tiktok_e-commerce/auth/conf"
 	"tiktok_e-commerce/auth/utils/redis"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -31,7 +31,7 @@ const (
 func GenerateRefreshToken(userId int32) (string, error) {
 	s, err := generateJWT(userId, refreshTokenExpireDuration)
 	if err == nil {
-		_, err = redis.SetVal(ctx, GetRefreshTokenKey(userId), s, refreshTokenExpireDuration)
+		_, err = redis.SetVal(ctx, redis.GetRefreshTokenKey(userId), s, refreshTokenExpireDuration)
 		if err != nil {
 			return "", err
 		}
@@ -42,7 +42,7 @@ func GenerateRefreshToken(userId int32) (string, error) {
 func GenerateAccessToken(userId int32) (string, error) {
 	s, err := generateJWT(userId, accessTokenExpireDuration)
 	if err == nil {
-		_, err = redis.SetVal(ctx, GetAccessTokenKey(userId), s, accessTokenExpireDuration)
+		_, err = redis.SetVal(ctx, redis.GetAccessTokenKey(userId), s, accessTokenExpireDuration)
 		if err != nil {
 			return "", err
 		}
@@ -79,38 +79,35 @@ func ParseJWT(tokenStr string) (jwt.MapClaims, int) {
 	}
 }
 
-// func saveRefreshToken(userId int32, refreshToken string) error {
-// 	return redis.RedisClient.Set(ctx, GetRefreshTokenKey(userId), refreshToken, refreshTokenExpireDuration).Err()
-// }
-
-// func refreshAccessToken(refreshToken string) (string, bool) {
-// 	// 解析refreshToken
-// 	claims, status := ParseJWT(refreshToken)
-// 	if status != TokenValid {
-// 		return "", false
-// 	}
-// 	userId := claims["userId"].(int32)
-// 	newAccessToken, err := generateJWT(userId, accessTokenExpireDuration)
-// 	if err != nil {
-// 		return "", false
-// 	}
-// 	err = redis.RedisClient.Set(ctx, GetAccessTokenKey(userId), newAccessToken, accessTokenExpireDuration).Err()
-// 	if err != nil {
-// 		return "", false
-// 	}
-// 	return newAccessToken, true
-// }
-
-func validateHandler(w http.ResponseWriter, r *http.Request) bool {
-	token := r.FormValue("accessToken")
-	if validateAccessToken(token) {
-		return true
-	} else {
-		return false
+// RefreshAccessToken 刷新access token，同时也要刷新refresh token
+func RefreshAccessToken(refreshToken string) (string, string, bool) {
+	// 解析refreshToken
+	userId, err := GetUserIdFromToken(refreshToken)
+	if err != nil {
+		klog.Error("userId转换为int失败，", err)
+		return "", "", false
 	}
+	savedRefreshToken, err := redis.GetVal(ctx, redis.GetRefreshTokenKey(userId))
+	if err != nil || savedRefreshToken != refreshToken {
+		return "", "", false
+	}
+	// 生成新的access token
+	newAccessToken, err := GenerateAccessToken(userId)
+	if err != nil {
+		return "", "", false
+	}
+	newRefreshToken, err := GenerateRefreshToken(userId)
+	if err != nil {
+		return "", "", false
+	}
+	return newAccessToken, newRefreshToken, true
 }
 
-func validateAccessToken(token string) bool {
-	_, status := ParseJWT(token)
-	return status == TokenValid
+func GetUserIdFromToken(token string) (int32, error) {
+	claims, status := ParseJWT(token)
+	if status != TokenValid {
+		return 0, errors.New("token无效")
+	}
+	userId := int32(claims["userId"].(float64))
+	return userId, nil
 }

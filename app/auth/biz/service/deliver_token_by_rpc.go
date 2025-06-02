@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"tiktok_e-commerce/auth/utils"
+	"tiktok_e-commerce/auth/utils/jwt"
 	auth "tiktok_e-commerce/rpc_gen/kitex_gen/auth"
 )
 
@@ -15,11 +15,11 @@ func NewDeliverTokenByRPCService(ctx context.Context) *DeliverTokenByRPCService 
 
 // Run create note info
 func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.DeliveryResp, err error) {
-	refreshToken, err := utils.GenerateRefreshToken(req.UserId)
+	refreshToken, err := jwt.GenerateRefreshToken(req.UserId)
 	if err != nil {
 		return nil , err 
 	}
-	accessToken , err := utils.GenerateAccessToken(req.UserId)
+	accessToken , err := jwt.GenerateAccessToken(req.UserId)
 	if err != nil {
 		return nil , err
 	}
