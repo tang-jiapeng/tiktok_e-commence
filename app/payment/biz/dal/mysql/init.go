@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"tiktok_e-commerce/payment/biz/model"
 	"tiktok_e-commerce/payment/conf"
 
 	"gorm.io/driver/mysql"
@@ -12,14 +13,22 @@ var (
 	err error
 )
 
+
 func Init() {
-	DB, err = gorm.Open(mysql.Open(conf.GetConf().MySQL.DSN),
+	dsn := conf.GetConf().MySQL.DSN
+	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
-			PrepareStmt:            true,
+			PrepareStmt:    true,
 			TranslateError: true,
 		},
 	)
 	if err != nil {
 		panic(err)
 	}
+
+	err := DB.AutoMigrate(&model.Payment{})	
+	if err != nil {
+		panic(err)
+	}
 }
+
