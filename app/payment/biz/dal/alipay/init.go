@@ -1,10 +1,14 @@
 package alipay
 
 import (
+	"bytes"
 	"context"
 	"io"
+	"net/http"
 	"os"
 
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
@@ -41,7 +45,7 @@ func Init() {
 	defer AppPublicContentPath.Close()
 
 	appid = os.Getenv("APPID")
-	notifyUrl = "http://example.com/payment/charge"
+	notifyUrl = os.Getenv("NOTIFY_URL")
 	privateKey = os.Getenv("PRIVATE_KEY")
 
 	AlipayPublicContent, _ = io.ReadAll(AlipayPublicContentPath)
@@ -104,4 +108,72 @@ func Pay(ctx context.Context, orderId int64, totalAmount float32) (result string
 	return paymentUrl, nil
 }
 
-//Todo 支付宝支付通知回调
+// 支付宝支付通知回调
+
+func PayNotify(ctx *context.Context , notifyBody string , c *app.RequestContext) {
+	// 解析异步通知的参数
+	request , err := convertToHTTPRequest(&c.Request) 
+	if err != nil {
+		klog.Error("支付宝支付通知解析失败, 错误信息: %s", err)
+		return
+	}
+	notifyReq , err := alipay.ParseNotifyToBodyMap(request)
+	if err != nil {
+		klog.Error("支付宝支付通知解析失败, 错误信息: %s", err)
+		return
+	}
+	//或
+	// value：url.Values
+	//
+	//notifyReq, err = alipay.ParseNotifyByURLValues()
+	//if err != nil {
+	//	klog.Error("支付宝支付通知解析失败, 错误信息: %s", err)
+	//	return
+	//}
+
+	//// 支付宝异步通知验签（公钥模式）
+	//ok, err = alipay.VerifySign(aliPayPublicKey, notifyReq)
+
+	// 支付宝异步通知验签（公钥证书模式）
+	_, err = alipay.VerifySignWithCert(AlipayPublicContent, notifyReq)
+	if err != nil {
+		klog.Error("支付宝支付通知验签失败, 错误信息: %s", err)
+		return
+	}
+
+	// 如果需要，可将 BodyMap 内数据，Unmarshal 到指定结构体指针 ptr
+	//err = notifyReq.Unmarshal(ptr)
+
+	// ====异步通知，返回支付宝平台的信息====
+	// 文档：https://opendocs.alipay.com/open/203/105286
+	// 程序执行完后必须打印输出“success”（不包含引号）。如果商户反馈给支付宝的字符不是success这7个字符，支付宝服务器会不断重发通知，直到超过24小时22分钟。一般情况下，25小时以内完成8次通知（通知的间隔频率一般是：4m,10m,10m,1h,2h,6h,15h）
+
+	// 此写法是 gin 框架返回支付宝的写法
+	//c.String(http.StatusOK, "%s", "success")
+
+	// 此写法是 echo 框架返回支付宝的写法
+	c.String(http.StatusOK, "success")
+}
+
+// convertToHTTPRequest 将 Hertz 的 *protocol.Request 转换为标准库的 *http.Request
+func convertToHTTPRequest(req *protocol.Request) (*http.Request, error) {
+	// 读取请求体
+	body := io.NopCloser(bytes.NewReader(req.Body()))
+
+	// 创建 *http.Request
+	httpReq, err := http.NewRequest(
+		string(req.Method()),
+		req.URI().String(),
+		body,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// 复制 Header
+	req.Header.VisitAll(func(key, value []byte) {
+		httpReq.Header.Set(string(key), string(value))
+	})
+
+	return httpReq, nil
+}

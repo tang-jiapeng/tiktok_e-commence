@@ -20,7 +20,7 @@ message Product {
 }
 
 message ProductRequest {
-  string productName = 1 [(api.form) = "productName"];
+  string productName = 1 [(api.form) = "product_name"];
 }
 
 message ProductResponse {

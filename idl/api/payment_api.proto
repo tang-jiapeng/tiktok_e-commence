@@ -10,7 +10,16 @@ service PaymentService {
   rpc Charge(ChargeRequest) returns (ChargeResponse) {
     option (api.post) = "/payment/charge";
   }
+  rpc Notify(Empty) returns (Empty) {
+    option (api.post) = "/payment/notify";
+  }
 }
+
+message NotifyResponse {
+  string message = 1;
+}
+
+message Empty {}
 
 message ChargeRequest {
   float amount = 1 [(api.form) = "amount"];
