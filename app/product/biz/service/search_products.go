@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"tiktok_e-commerce/common/constant"
+	"tiktok_e-commerce/product/biz/dal/mysql"
+	"tiktok_e-commerce/product/biz/model"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 )
 
@@ -16,5 +19,12 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
 	// Finish your business logic.
 
-	return
+	db := mysql.DB
+	var p []model.Product
+	result := db.Table("tb_product").Select("*").Find(&p)
+	resp = &product.SearchProductsResp{
+		StatusCode: 0,
+		StatusMsg:  constant.GetMsg(0),
+	}
+	return resp, result.Error
 }

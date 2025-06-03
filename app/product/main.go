@@ -4,26 +4,32 @@ import (
 	"net"
 	"time"
 
-	// "tiktok_e-commerce/common/infra/nacos"
-	"tiktok_e-commerce/payment/biz/dal"
+	"tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/product/biz/dal"
 	"tiktok_e-commerce/product/conf"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		klog.Warn("Failed to load .env file: %v", err)
+	}
+	
 	dal.Init()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
 
-	err := svr.Run()
+	err = svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
 	}
@@ -42,9 +48,8 @@ func kitexInit() (opts []server.Option) {
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
 
-	// r := nacos.RegisterService()
-	// opts = append(opts, server.WithRegistry(r))
-
+	r := nacos.RegisterService()
+	opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()

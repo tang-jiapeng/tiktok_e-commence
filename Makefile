@@ -33,7 +33,7 @@ gen_api:
 	cwgo server --type HTTP --idl ../../idl/api/user_api.proto --server_name api --module ${ROOT_MOD}/api && \
 	# cwgo server --type HTTP --idl ../../idl/api/cart_api.proto --server_name api --module ${ROOT_MOD}/api && \
 	# cwgo server --type HTTP --idl ../../idl/api/order_api.proto --server_name api --module ${ROOT_MOD}/api && \
-	# cwgo server --type HTTP --idl ../../idl/api/product_api.proto --server_name api --module ${ROOT_MOD}/api && \
+	cwgo server --type HTTP --idl ../../idl/api/product_api.proto --server_name api --module ${ROOT_MOD}/api && \
 	# cwgo server --type HTTP --idl ../../idl/api/checkout_api.proto --server_name api --module ${ROOT_MOD}/api && \
 	cwgo server --type HTTP --idl ../../idl/api/payment_api.proto --server_name api --module ${ROOT_MOD}/api && \
 	go mod tidy
