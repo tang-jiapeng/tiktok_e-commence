@@ -4,10 +4,11 @@ import (
 	"net"
 	"time"
 
-	"tiktok_e-commerce/user/biz/infra/rpc"
 	"tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
 	"tiktok_e-commerce/user/biz/dal"
+	"tiktok_e-commerce/user/biz/infra/rpc"
 	"tiktok_e-commerce/user/conf"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -25,6 +26,8 @@ func main() {
 	if err != nil {
 		klog.Warn("Failed to load .env file: %v", err)
 	}
+
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 
 	dal.Init()
 	rpc.InitClient()

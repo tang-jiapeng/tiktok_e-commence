@@ -5,6 +5,7 @@ import (
 	"time"
 
 	// "tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/order/conf"
 	"tiktok_e-commerce/product/biz/dal"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/order/orderservice"
@@ -18,6 +19,9 @@ import (
 )
 
 func main() {
+
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
+
 	dal.Init()
 	opts := kitexInit()
 

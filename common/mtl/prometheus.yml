@@ -1,0 +1,54 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'nacos'
+    metrics_path: '/metrics'  # 需确认 Nacos 是否支持此端点
+    static_configs:
+      - targets: ['nacos:8848']
+        labels:
+          group: 'nacos'
+
+  - job_name: 'hertz_api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api:8080']
+        labels:
+          group: 'hert_api'
+
+  - job_name: 'user_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['user_service:9888']
+        labels:
+          group: 'user_service'
+
+  - job_name: 'auth_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['auth_service:9001']
+        labels:
+          group: 'auth_service'
+
+  - job_name: 'payment_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['payment_service:9002']
+        labels:
+          group: 'payment_service'
+
+  - job_name: 'product_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['product_service:9003']
+        labels:
+          group: 'product_service'
+
+  # RPC 服务指标端口待确认
+  # - job_name: 'rpc_service'
+  #   metrics_path: '/metrics'
+  #   static_configs:
+  #     - targets: ['rpc_service:9999']
+  #       labels:
+  #         group: 'rpc_service'

@@ -7,6 +7,7 @@ import (
 	"tiktok_e-commerce/auth/biz/dal"
 	"tiktok_e-commerce/auth/conf"
 	"tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth/authservice"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -24,7 +25,7 @@ func main() {
 	if err != nil {
 		klog.Warn("Failed to load .env file: %v", err)
 	}
-
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	dal.Init()
 	opts := kitexInit()
 

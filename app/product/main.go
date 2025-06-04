@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/product/biz/dal"
 	"tiktok_e-commerce/product/conf"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
@@ -23,6 +24,8 @@ func main() {
 	if err != nil {
 		klog.Warn("Failed to load .env file: %v", err)
 	}
+
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	
 	dal.Init()
 	opts := kitexInit()

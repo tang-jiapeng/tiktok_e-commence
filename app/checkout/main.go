@@ -4,17 +4,22 @@ import (
 	"net"
 	"time"
 
+	"tiktok_e-commerce/checkout/conf"
+	"tiktok_e-commerce/common/mtl"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/checkout/checkoutservice"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"tiktok_e-commerce/checkout/conf"
-	"tiktok_e-commerce/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
+
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
+
 	opts := kitexInit()
 
 	svr := checkoutservice.NewServer(new(CheckoutServiceImpl), opts...)
