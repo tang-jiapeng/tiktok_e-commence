@@ -9,7 +9,7 @@ import (
 	rpcpayment "tiktok_e-commerce/rpc_gen/kitex_gen/payment"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 type ChargeService struct {
@@ -29,7 +29,7 @@ func (h *ChargeService) Run(req *payment.ChargeRequest) (resp *payment.ChargeRes
 		UserId:  req.UserId,
 	})
 	if err != nil {
-		klog.Error("payment charge error: %v", err)
+		hlog.Error("payment charge error: %v", err)
 		return nil, errors.New("支付失败，请稍后再试")
 	}
 	resp = &payment.ChargeResponse{
