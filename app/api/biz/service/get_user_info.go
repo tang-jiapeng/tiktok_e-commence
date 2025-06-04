@@ -30,9 +30,14 @@ func (h *GetUserInfoService) Run(req *user.Empty) (resp *user.GetUserInfoRespons
 		return nil, err
 	}
 	return &user.GetUserInfoResponse{
-		StatusCode: 0,
-		StatusMsg:  constant.GetMsg(0),
-		Email:      userInfo.User.Email,
+		StatusCode:  0,
+		StatusMsg:   constant.GetMsg(0),
+		Username:    userInfo.User.Username,
+		Email:       userInfo.User.Email,
+		Sex:         userInfo.User.Sex,
+		Description: userInfo.User.Description,
+		Avatar:      userInfo.User.Avatar,
+		CreatedAt:   userInfo.User.CreatedAt,
 	}, nil
 
 }

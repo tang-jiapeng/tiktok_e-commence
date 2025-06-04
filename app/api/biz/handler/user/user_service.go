@@ -3,15 +3,17 @@ package user
 import (
 	"context"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"tiktok_e-commerce/api/biz/service"
 	"tiktok_e-commerce/api/biz/utils"
 	user "tiktok_e-commerce/api/hertz_gen/api/user"
+	"tiktok_e-commerce/common/constant"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Login .
-// @router /user/login [GET]
+// @router /user/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.LoginRequest
@@ -43,6 +45,14 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp := &user.RegisterResponse{}
+
+	if req.Sex < 0 || req.Sex > 2 {
+		resp.StatusCode = 1007
+		resp.StatusMsg = constant.GetMsg(1007)
+		utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+		return
+	}
+
 	resp, err = service.NewRegisterService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)

@@ -5,6 +5,7 @@ go 1.23.1
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
+	github.com/cloudwego/hertz v0.10.0
 	github.com/cloudwego/kitex v0.13.1
 	github.com/go-pay/gopay v1.5.113
 	github.com/joho/godotenv v1.5.1
@@ -41,6 +42,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
+	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-errors/errors v1.0.1 // indirect
 	github.com/go-pay/crypto v0.0.1 // indirect
 	github.com/go-pay/xlog v0.0.3 // indirect
@@ -58,6 +60,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect

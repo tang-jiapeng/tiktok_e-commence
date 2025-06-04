@@ -25,7 +25,12 @@ func (s *GetUserService) Run(req *user.GetUserReq) (resp *user.GetUserResp, err 
 		StatusCode: 0,
 		StatusMsg:  constant.GetMsg(0),
 		User: &user.User{
+			Username: userInfo.Username,
 			Email: userInfo.Email,
+			Sex: model.SexToString(userInfo.Sex),
+			Description: userInfo.Description,
+			Avatar: userInfo.Avatar,
+			CreatedAt: userInfo.CreatedAt.Format("2006-01-02 15:04:05"),
 		},
 	}
 	return

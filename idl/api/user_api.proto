@@ -7,7 +7,7 @@ option go_package = "api/user";
 import "api.proto";
 
 message LoginRequest {
-  string email = 1 [(api.form) = "email"];
+  string username = 1 [(api.form) = "username"];
   string password = 2 [(api.form) = "password"];
 }
 message LoginResponse {
@@ -18,12 +18,13 @@ message LoginResponse {
 }
 
 message RegisterRequest {
-  string email = 1 [(api.form)= "email"];
+  string username = 1 [(api.form)= "username"];
   string password = 2 [(api.form)= "password"];
   string confirm_password = 3 [(api.form)= "confirm_password"];
-//  string description = 3 [(api.form)= "description"];
-//  int32 sex = 4 [(api.form)= "sex"];
-//  string avatar = 5 [(api.form)= "avatar"];
+  string email = 4 [(api.form)= "email"];
+  string description = 5 [(api.form)= "description"];
+  int32 sex = 6 [(api.form)= "sex"];
+  string avatar = 7 [(api.form)= "avatar"];
 }
 
 message RegisterResponse {
@@ -35,10 +36,11 @@ message GetUserInfoResponse {
   int32 status_code = 1[(api.go_tag)='json:"status_code"'];
   string status_msg = 2;
   string email = 3;
-//  string username = 3;
-//  int32 sex = 4;
-//  string description = 5;
-//  string avatar = 6;
+  string username = 4;
+  string sex = 5;
+  string description = 6;
+  string avatar = 7;
+  string created_at = 8;
 }
 
 message Empty {}
