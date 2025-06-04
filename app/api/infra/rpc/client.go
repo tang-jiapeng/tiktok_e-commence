@@ -10,8 +10,8 @@ import (
 	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
 	"time"
 
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
-	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 var (
@@ -42,27 +42,27 @@ func InitClient() {
 func initUserClient() {
 	UserClient, err = userservice.NewClient("user-service", commonSuite, client.WithRPCTimeout(3*time.Second))
 	if err != nil {
-		klog.Fatal("init user client failed: ", err)
+		hlog.Fatal("init user client failed: ", err)
 	}
 }
 
 func initAuthClient() {
 	AuthClient, err = authservice.NewClient("auth-service", commonSuite, client.WithRPCTimeout(3*time.Second))
 	if err != nil {
-		klog.Fatal("init auth client failed: ", err)
+		hlog.Fatal("init auth client failed: ", err)
 	}
 }
 
 func initProductClient() {
 	ProductClient, err = productcatalogservice.NewClient("product-service", commonSuite, client.WithRPCTimeout(3*time.Second))
 	if err != nil {
-		klog.Fatal("init product client failed: ", err)
+		hlog.Fatal("init product client failed: ", err)
 	}
 }
 
 func initPaymentClient() {
 	PaymentClient, err = paymentservice.NewClient("payment-service", commonSuite, client.WithRPCTimeout(3*time.Second))
 	if err != nil {
-		klog.Fatal("init payment client failed: ", err)
+		hlog.Fatal("init payment client failed: ", err)
 	}
 }

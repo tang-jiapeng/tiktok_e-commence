@@ -28,7 +28,7 @@ func GetUserByUsername(db *gorm.DB, ctx context.Context, username string) (user 
 }
 
 func CreateUser(db *gorm.DB, ctx context.Context, user *User) error {
-	result := db.WithContext(ctx).Create(user)
+	result := db.Create(user)
 	return result.Error
 }
 

@@ -20,14 +20,9 @@ var (
 type Config struct {
 	Env      string
 	Kitex    Kitex    `yaml:"kitex"`
-	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
 	Jwt      Jwt      `yaml:"jwt"`
-}
-
-type MySQL struct {
-	DSN string `yaml:"dsn"`
 }
 
 type Redis struct {

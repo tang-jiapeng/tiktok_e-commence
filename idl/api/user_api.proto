@@ -43,6 +43,11 @@ message GetUserInfoResponse {
   string created_at = 8;
 }
 
+message LogoutResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"']; // 0-success, other values-failure
+  string status_msg = 2;
+}
+
 message Empty {}
 
 service UserService {
@@ -61,5 +66,9 @@ service UserService {
 
   rpc RefreshToken(Empty) returns (LoginResponse) {
     option (api.post) = "/user/refresh_token";
+  }
+
+  rpc Logout(Empty) returns (LogoutResponse) {
+    option (api.post) = "/user/logout";
   }
 }
