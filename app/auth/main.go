@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"tiktok_e-commerce/auth/biz/dal"
+	"tiktok_e-commerce/auth/casbin"
 	"tiktok_e-commerce/auth/conf"
 	"tiktok_e-commerce/common/infra/nacos"
 	"tiktok_e-commerce/common/mtl"
@@ -27,6 +28,7 @@ func main() {
 	}
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	dal.Init()
+	casbin.Init()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)

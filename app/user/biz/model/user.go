@@ -7,6 +7,13 @@ import (
 	"gorm.io/plugin/soft_delete"
 )
 
+type Role string
+
+const (
+	RoleAdmin Role = "admin"
+	RoleUser  Role = "user"
+)
+
 type User struct {
 	Base
 	Username    string                `gorm:"not null;type:varchar(64);uniqueIndex:idx_username_deleted_at"`
@@ -15,6 +22,7 @@ type User struct {
 	Password    string                `gorm:"not null;type:varchar(255)"`
 	Description string                `gorm:"not null;type:varchar(255);default:''"`
 	Avatar      string                `gorm:"not null;type:varchar(255);default:''"`
+	Role        Role                  `gorm:"not null;type:varchar(64);default:'user'"`
 	DeletedAt   soft_delete.DeletedAt `gorm:"index;uniqueIndex:idx_username_deleted_at"`
 }
 

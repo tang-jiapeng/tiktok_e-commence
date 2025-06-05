@@ -29,6 +29,8 @@ func AuthorizationMiddleware() app.HandlerFunc {
 			verifyResp, err := authClient.VerifyTokenByRPC(ctx, &auth.VerifyTokenReq{
 				RefreshToken: c.Request.Header.Get("refresh_token"),
 				AccessToken:  c.Request.Header.Get("access_token"),
+				Path:         path,
+				Method:       string(c.Request.Method()),
 			})
 			if err != nil {
 				hlog.CtxErrorf(ctx, "rpc权限校验失败，err: %v", err)

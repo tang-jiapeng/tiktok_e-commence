@@ -6,6 +6,8 @@ import (
 	"tiktok_e-commerce/auth/utils/redis"
 	"tiktok_e-commerce/common/constant"
 	auth "tiktok_e-commerce/rpc_gen/kitex_gen/auth"
+
+	"github.com/pkg/errors"
 )
 
 type VerifyTokenByRPCService struct {
@@ -19,17 +21,19 @@ func NewVerifyTokenByRPCService(ctx context.Context) *VerifyTokenByRPCService {
 func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.VerifyResp, err error) {
 	
 	// 校验access token
-	userId, err := jwt.GetUserIdFromToken(req.AccessToken)
-	if err != nil {
+	claims, status := jwt.ParseJWT(req.AccessToken)
+	if status != jwt.TokenValid {
 		return &auth.VerifyResp{
 			StatusCode: 1004,
 			StatusMsg:  constant.GetMsg(1004),
 		}, nil
 	}
+	userId := int32(claims["userId"].(float64))
+	// role := claims["role"].(string)
 	// 校验 redis 中的access token
 	savedAccessToken, err := redis.GetVal(s.ctx, redis.GetAccessTokenKey(userId))
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	if savedAccessToken != req.AccessToken {
 		return &auth.VerifyResp{
@@ -37,6 +41,9 @@ func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.Veri
 			StatusMsg:  constant.GetMsg(1005),
 		}, nil
 	}
+
+	// casbin 鉴权
+
 
 	return &auth.VerifyResp{
 		StatusCode: 0,
