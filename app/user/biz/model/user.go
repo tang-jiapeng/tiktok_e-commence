@@ -49,3 +49,20 @@ func SexToString(sex int32) string {
 		return "未知"
 	}
 }
+
+func UpdateUser(db *gorm.DB, ctx context.Context, id int32, username string, email string, sex int32, description string, avatar string) error {
+	user := User{
+		Base: Base{ID: id},
+	}
+
+	return db.WithContext(ctx).Model(&user).Select("username", "email", "sex", "description", "avatar").
+		Updates(
+			&User{
+				Username:    username,
+				Email:       email,
+				Sex:         sex,
+				Description: description,
+				Avatar:      avatar,
+			},
+		).Error
+}

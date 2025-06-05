@@ -4,7 +4,7 @@ ROOT_MOD = tiktok_e-commerce
 .PHONY: gen_rpc_clients
 gen_rpc_clients:
 	@cd rpc_gen && \
-	cwgo client --type RPC --module ${ROOT_MOD}/rpc_gen -I ../idl --service auth --idl ../idl/auth.proto && \
+	# cwgo client --type RPC --module ${ROOT_MOD}/rpc_gen -I ../idl --service auth --idl ../idl/auth.proto && \
 	cwgo client --type RPC --module ${ROOT_MOD}/rpc_gen -I ../idl --service cart --idl ../idl/cart.proto && \
 	cwgo client --type RPC --module ${ROOT_MOD}/rpc_gen -I ../idl --service checkout --idl ../idl/checkout.proto && \
 	cwgo client --type RPC --module ${ROOT_MOD}/rpc_gen -I ../idl --service order --idl ../idl/order.proto && \
@@ -17,7 +17,7 @@ gen_rpc_clients:
 # 生成所有 RPC 服务端代码
 .PHONY: gen_rpc_servers
 gen_rpc_servers:
-	@cd app/auth && cwgo server --type RPC --service auth --module ${ROOT_MOD}/auth --pass "-use ${ROOT_MOD}/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/auth.proto && go mod tidy
+	# @cd app/auth && cwgo server --type RPC --service auth --module ${ROOT_MOD}/auth --pass "-use ${ROOT_MOD}/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/auth.proto && go mod tidy
 	@cd app/cart && cwgo server --type RPC --service cart --module ${ROOT_MOD}/cart --pass "-use ${ROOT_MOD}/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/cart.proto && go mod tidy
 	@cd app/checkout && cwgo server --type RPC --service checkout --module ${ROOT_MOD}/checkout --pass "-use ${ROOT_MOD}/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/checkout.proto && go mod tidy
 	@cd app/order && cwgo server --type RPC --service order --module ${ROOT_MOD}/order --pass "-use ${ROOT_MOD}/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/order.proto && go mod tidy
