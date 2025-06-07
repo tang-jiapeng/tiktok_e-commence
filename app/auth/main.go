@@ -29,7 +29,7 @@ func main() {
 	}
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	dal.Init()
-	casbin.Init()
+	casbin.InitCasbin()
 	rpc.InitClient()
 	opts := kitexInit()
 
