@@ -16,18 +16,18 @@ func NewDeliverTokenByRPCService(ctx context.Context) *DeliverTokenByRPCService 
 
 // Run create note info
 func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.DeliveryResp, err error) {
-	refreshToken, err := jwt.GenerateRefreshToken(req.UserId , req.Role)
+	refreshToken, err := jwt.GenerateRefreshToken(req.UserId)
 	if err != nil {
-		return nil , err 
+		return nil, err
 	}
-	accessToken , err := jwt.GenerateAccessToken(req.UserId , req.Role)
+	accessToken, err := jwt.GenerateAccessToken(req.UserId, req.Role)
 	if err != nil {
-		return nil , err
+		return nil, err
 	}
 	return &auth.DeliveryResp{
-		StatusCode:	0,
-		StatusMsg:	constant.GetMsg(0),
-		AccessToken:	accessToken,
-		RefreshToken:	refreshToken,
+		StatusCode:   0,
+		StatusMsg:    constant.GetMsg(0),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}, nil
 }

@@ -7,6 +7,7 @@ import (
 	"tiktok_e-commerce/auth/biz/dal"
 	"tiktok_e-commerce/auth/casbin"
 	"tiktok_e-commerce/auth/conf"
+	"tiktok_e-commerce/auth/infra/rpc"
 	"tiktok_e-commerce/common/infra/nacos"
 	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth/authservice"
@@ -29,6 +30,7 @@ func main() {
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	dal.Init()
 	casbin.Init()
+	rpc.InitClient()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)
