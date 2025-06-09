@@ -15,6 +15,7 @@ require (
 	github.com/hertz-contrib/pprof v0.1.2
 	github.com/joho/godotenv v1.5.1
 	github.com/kr/pretty v0.3.1
+	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.9.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/protobuf v1.36.6

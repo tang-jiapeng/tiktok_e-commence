@@ -10,6 +10,7 @@ import (
 	"tiktok_e-commerce/user/biz/model"
 
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,8 +27,24 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 	if err != nil {
 		// 数据库错误
 		klog.Error("用户登录失败,req: %v, err: %v", req, err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
+
+	bannedResp, err := rpc.AuthClient.CheckIfUserBanned(s.ctx, &auth.CheckIfUserBannedReq{
+		UserId: loginUser.ID,
+	})
+	if err != nil {
+		klog.Errorf("rpc鉴权服务查询用户是否封禁失败，userId: %d, err: %v", loginUser.ID, err)
+		return nil, errors.WithStack(err)
+	}
+	if bannedResp.IsBanned {
+		resp = &user.LoginResp{
+			StatusCode: 1010,
+			StatusMsg:	constant.GetMsg(1010),
+		}
+		return resp , nil 
+	}
+
 	comparePwdErr := bcrypt.CompareHashAndPassword([]byte(loginUser.Password), []byte(req.Password))
 	if loginUser == nil || comparePwdErr != nil {
 		// 用户名或者密码错误

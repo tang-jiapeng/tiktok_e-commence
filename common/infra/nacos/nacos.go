@@ -17,6 +17,18 @@ func RegisterService() kitexRigistry.Registry {
 }
 
 func GetNamingClient() naming_client.INamingClient {
+	clientConfig, serverConfigs := GetNacosConfig()
+	namingClient, err := clients.CreateNamingClient(map[string]interface{}{
+		"serverConfigs": serverConfigs,
+		"clientConfig":  clientConfig,
+	})
+	if err != nil {
+		panic(err)
+	}
+	return namingClient
+}
+
+func GetNacosConfig() (constant.ClientConfig, []constant.ServerConfig) {
 	env := os.Getenv("env")
 	var logLevel string
 	if env == "dev" {
@@ -36,12 +48,5 @@ func GetNamingClient() naming_client.INamingClient {
 			Port:   8848,
 		},
 	}
-	namingClient, err := clients.CreateNamingClient(map[string]interface{}{
-		"serverConfigs": serverConfigs,
-		"clientConfig":  clientConfig,
-	})
-	if err != nil {
-		panic(err)
-	}
-	return namingClient
+	return clientConfig, serverConfigs
 }
