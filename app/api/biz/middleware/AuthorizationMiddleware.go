@@ -18,6 +18,7 @@ var (
 		"/user/register":      {},
 		"/user/login":         {},
 		"/user/refresh_token": {},
+		"/product/search":		 {},
 	}
 )
 

@@ -23,22 +23,28 @@ func NewSearchService(Context context.Context, RequestContext *app.RequestContex
 }
 
 func (h *SearchService) Run(req *product.ProductRequest) (resp *product.ProductResponse, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
+
 	client := rpc.ProductClient
 	res, err := client.SearchProducts(h.Context, &rpcproduct.SearchProductsReq{
 		Query: req.ProductName,
 	})
+
 	if err != nil {
 		hlog.Error("product search error: %v", err)
 		return nil, errors.New("搜索失败，请稍后再试")
 	}
+	productList := []*product.Product{}
+	for i := range res.Results {
+		source := res.Results[i]
+		productList = append(productList, &product.Product{
+			Name:        source.Name,
+			Description: source.Description,
+		})
+	}
 	resp = &product.ProductResponse{
 		StatusCode: res.StatusCode,
 		StatusMsg:  res.StatusMsg,
+		Products:   productList,
 	}
-	return
+	return resp, nil
 }

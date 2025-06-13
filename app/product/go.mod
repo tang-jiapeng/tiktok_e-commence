@@ -5,6 +5,7 @@ go 1.23.1
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
+	github.com/cloudwego/hertz v0.10.0
 	github.com/cloudwego/kitex v0.13.1
 	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/joho/godotenv v1.5.1
