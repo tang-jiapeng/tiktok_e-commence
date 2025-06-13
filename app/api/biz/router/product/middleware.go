@@ -20,3 +20,23 @@ func _searchMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _productdeleteMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productinsertMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productselectMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productupdateMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

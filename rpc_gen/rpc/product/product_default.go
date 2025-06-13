@@ -33,3 +33,39 @@ func SearchProducts(ctx context.Context, req *product.SearchProductsReq, callOpt
 	}
 	return resp, nil
 }
+
+func InsertProduct(ctx context.Context, req *product.InsertProductReq, callOptions ...callopt.Option) (resp *product.InsertProductResp, err error) {
+	resp, err = defaultClient.InsertProduct(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "InsertProduct call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func SelectProduct(ctx context.Context, req *product.SelectProductReq, callOptions ...callopt.Option) (resp *product.SelectProductResp, err error) {
+	resp, err = defaultClient.SelectProduct(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "SelectProduct call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func DeleteProduct(ctx context.Context, req *product.DeleteProductReq, callOptions ...callopt.Option) (resp *product.DeleteProductResp, err error) {
+	resp, err = defaultClient.DeleteProduct(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteProduct call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func UpdateProduct(ctx context.Context, req *product.UpdateProductReq, callOptions ...callopt.Option) (resp *product.UpdateProductResp, err error) {
+	resp, err = defaultClient.UpdateProduct(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "UpdateProduct call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

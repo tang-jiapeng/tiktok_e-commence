@@ -30,3 +30,83 @@ func Search(ctx context.Context, c *app.RequestContext) {
 
 	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
 }
+
+// ProductInsert .
+// @router /product/insert [POST]
+func ProductInsert(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductInsertRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewProductInsertService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
+
+// ProductSelect .
+// @router /product/select [POST]
+func ProductSelect(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductSelectRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewProductSelectService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
+
+// ProductDelete .
+// @router /product/delete [POST]
+func ProductDelete(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductDeleteRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewProductDeleteService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
+
+// ProductUpdate .
+// @router /product/update [POST]
+func ProductUpdate(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductUpdateRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewProductUpdateService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}

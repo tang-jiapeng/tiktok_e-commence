@@ -8,6 +8,10 @@ service ProductCatalogService {
   rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
   rpc GetProduct(GetProductReq) returns (GetProductResp) {}
   rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
+  rpc InsertProduct(InsertProductReq) returns (InsertProductResp) {}
+  rpc SelectProduct(SelectProductReq) returns (SelectProductResp) {}
+  rpc DeleteProduct(DeleteProductReq) returns (DeleteProductResp) {}
+  rpc UpdateProduct(UpdateProductReq) returns (UpdateProductResp) {}
 }
 
 message ListProductsReq{
@@ -18,7 +22,7 @@ message ListProductsReq{
 }
 
 message Product {
-  uint32 id = 1;
+  int64  id = 1;
   string name = 2;
   string description = 3;
   string picture = 4;
@@ -37,7 +41,7 @@ message ListProductsResp {
 }
 
 message GetProductReq {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message GetProductResp {
@@ -54,4 +58,54 @@ message SearchProductsResp {
   int32 status_code = 1;
   string status_msg = 2;
   repeated Product results = 3;
+}
+
+message InsertProductReq {
+  string name = 1;
+  string description = 2;
+  string picture = 3;
+  float price = 4;
+  int64 stock = 5;
+}
+
+message InsertProductResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message SelectProductReq {
+  int64 id = 1;
+}
+
+message SelectProductResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+  Product product = 3;
+}
+
+message DeleteProductReq {
+  int64 id = 1;
+}
+
+message DeleteProductResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message UpdateProductReq {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string picture = 4;
+  float price = 5;
+
+  repeated string categories = 6;
+  int64 stock = 7;
+  int64 sale = 8;
+  uint32 publish_status = 9;
+}
+
+message UpdateProductResp {
+  int32 status_code = 1;
+  string status_msg = 2;
 }

@@ -29,3 +29,31 @@ func (s *ProductCatalogServiceImpl) SearchProducts(ctx context.Context, req *pro
 
 	return resp, err
 }
+
+// InsertProduct implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) InsertProduct(ctx context.Context, req *product.InsertProductReq) (resp *product.InsertProductResp, err error) {
+	resp, err = service.NewInsertProductService(ctx).Run(req)
+
+	return resp, err
+}
+
+// SelectProduct implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) SelectProduct(ctx context.Context, req *product.SelectProductReq) (resp *product.SelectProductResp, err error) {
+	resp, err = service.NewSelectProductService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DeleteProduct implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) DeleteProduct(ctx context.Context, req *product.DeleteProductReq) (resp *product.DeleteProductResp, err error) {
+	resp, err = service.NewDeleteProductService(ctx).Run(req)
+
+	return resp, err
+}
+
+// UpdateProduct implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) UpdateProduct(ctx context.Context, req *product.UpdateProductReq) (resp *product.UpdateProductResp, err error) {
+	resp, err = service.NewUpdateProductService(ctx).Run(req)
+
+	return resp, err
+}
