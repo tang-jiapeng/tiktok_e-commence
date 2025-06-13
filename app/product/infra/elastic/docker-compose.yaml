@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=elastic_password
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - ./elasticsearch-analysis-ik-7.17.9.zip:/usr/share/elasticsearch/elasticsearch-analysis-ik-7.17.9.zip
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:elastic_password -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    command: >
+      /bin/bash -c "
+        bin/elasticsearch-plugin install --batch file:///usr/share/elasticsearch/elasticsearch-analysis-ik-7.17.9.zip &&
+        /usr/local/bin/docker-entrypoint.sh
+      "
+
+volumes:
+  es-data:
+
+networks:
+  app-network:
+    driver: bridge

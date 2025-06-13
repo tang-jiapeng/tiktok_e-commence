@@ -8,6 +8,7 @@ import (
 	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/product/biz/dal"
 	"tiktok_e-commerce/product/conf"
+	"tiktok_e-commerce/product/infra/elastic"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -24,10 +25,9 @@ func main() {
 	if err != nil {
 		klog.Warn("Failed to load .env file: %v", err)
 	}
-
-	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
-	
 	dal.Init()
+	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
+	elastic.InitClient()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)

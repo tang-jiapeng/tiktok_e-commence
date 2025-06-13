@@ -23,6 +23,7 @@ type Config struct {
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
+	Elasticsearch ElasticSearch `yaml:"elasticsearch"`
 }
 
 type MySQL struct {
@@ -51,6 +52,13 @@ type Registry struct {
 	RegistryAddress string `yaml:"registry_address"`
 	Username        string   `yaml:"username"`
 	Password        string   `yaml:"password"`
+}
+
+type ElasticSearch struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 // GetConf gets configuration instance

@@ -6,6 +6,7 @@ replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
 	github.com/cloudwego/kitex v0.13.1
+	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/config-nacos v0.4.1
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b

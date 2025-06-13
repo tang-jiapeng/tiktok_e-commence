@@ -33,3 +33,5 @@ log/
 cache/
 
 alipay_cert/
+
+.zip/
