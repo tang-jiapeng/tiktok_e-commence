@@ -3,13 +3,13 @@ package elastic
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
 	"tiktok_e-commerce/product/biz/vo"
 
+	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 )
@@ -90,13 +90,16 @@ func ProduceIndicesInit() {
 
 	// 如果索引不存在，创建索引
 	if productIndicesExist.StatusCode != 200 {
+		SettingData, err := sonic.Marshal(vo.ProductSearchMappingSetting)
+		if err != nil {
+			return
+		}
 		create, err := esapi.IndicesCreateRequest{
 			Index: "product",
-			Body:  strings.NewReader(mapping),
+			Body:  strings.NewReader(string(SettingData)),
 		}.Do(context.Background(), &ElasticClient)
 		if err != nil {
 			klog.Errorf("创建索引失败: %v", err)
-			return
 		}
 		if create.StatusCode != 200 {
 			body, _ := io.ReadAll(create.Body)
@@ -136,33 +139,15 @@ func SyncProductToES() error {
 			Name:        pro.Name,
 			Description: pro.Description,
 		}
-		jsonData, err := json.Marshal(dataVo)
-		if err != nil {
-			klog.Errorf("序列化产品 ID=%d 失败: %v", pro.ID, err)
-			continue
-		}
+		jsonData, _ := json.Marshal(dataVo)
 
 		// 3. 使用 IndexRequest 插入或更新文档
-		res, err := esapi.IndexRequest{
-			Index:      "product",
-			DocumentID: fmt.Sprintf("%d", pro.ID), // 使用数据库 ID 作为文档 ID
-			Body:       strings.NewReader(string(jsonData)),
-			Refresh:    "true", // 立即刷新，确保数据可见
+		_, _ = esapi.IndexRequest{
+			Index:   "product",
+			Body:    strings.NewReader(string(jsonData)),
+			Refresh: "true", // 立即刷新，确保数据可见
 		}.Do(context.Background(), &ElasticClient)
-		if err != nil {
-			klog.Errorf("索引产品 ID=%d 失败: %v", pro.ID, err)
-			continue
-		}
-		defer res.Body.Close()
-
-		if res.StatusCode != 201 && res.StatusCode != 200 {
-			body, _ := io.ReadAll(res.Body)
-			klog.Errorf("索引产品 ID=%d 失败，状态码: %d, 响应: %s", pro.ID, res.StatusCode, string(body))
-			continue
-		}
-		// klog.Infof("成功索引产品 ID=%d", pro.ID)
 	}
 
-	// klog.Info("数据同步到 Elasticsearch 完成")
 	return nil
 }

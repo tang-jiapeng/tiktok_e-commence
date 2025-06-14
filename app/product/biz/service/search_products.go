@@ -23,13 +23,11 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 
 // Run create note info
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
-
-	query := req.Query
-	queryBody := map[string]interface{}{
-		"query": map[string]interface{}{
-			"multi_match": map[string]interface{}{
-				"query":  query,
-				"fields": []string{"name", "description"},
+	queryBody := vo.ProductSearchQueryBody{
+		Query: vo.ProductSearchQuery{
+			MutiMatch: vo.ProductSearchMultiMatchQuery{
+				Query:  req.Query,
+				Fields: []string{"name", "description"},
 			},
 		},
 	}

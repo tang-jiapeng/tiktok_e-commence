@@ -29,3 +29,48 @@ type ProductSearchDataVo struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
+
+type Field struct {
+	Type     string `json:"type"`
+	Analyzer string `json:"analyzer"`
+}
+
+type Properties struct {
+	Name        Field `json:"name"`
+	Description Field `json:"description"`
+}
+
+type Mappings struct {
+	Properties Properties `json:"properties"`
+}
+type ProductSearchMapping struct {
+	Mappings Mappings `json:"mappings"`
+}
+
+var ProductSearchMappingSetting = ProductSearchMapping{
+	Mappings: Mappings{
+		Properties: Properties{
+			Name: Field{
+				Type:     "text",
+				Analyzer: "ik_smart",
+			},
+			Description: Field{
+				Type:     "text",
+				Analyzer: "ik_smart",
+			},
+		},
+	},
+}
+
+type ProductSearchQueryBody struct {
+	Query ProductSearchQuery `json:"query"`
+}
+
+type ProductSearchQuery struct {
+	MutiMatch ProductSearchMultiMatchQuery `json:"muti_match"`
+}
+
+type ProductSearchMultiMatchQuery struct {
+	Query  string   `json:"query"`
+	Fields []string `json:"fields"`
+}

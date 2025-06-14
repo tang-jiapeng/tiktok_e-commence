@@ -35,3 +35,5 @@ cache/
 alipay_cert/
 
 .zip/
+
+.idea/

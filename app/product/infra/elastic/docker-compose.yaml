@@ -2,7 +2,7 @@ version: '3'
 
 services:
   elasticsearch:
-    image: elasticsearch:7.17.9
+    image: elasticsearch:7.17.10
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=true
@@ -12,21 +12,21 @@ services:
       - "9200:9200"
     volumes:
       - es-data:/usr/share/elasticsearch/data
-      - ./elasticsearch-analysis-ik-7.17.9.zip:/usr/share/elasticsearch/elasticsearch-analysis-ik-7.17.9.zip
+      - ./elasticsearch-analysis-ik-7.17.10.zip:/usr/share/elasticsearch/elasticsearch-analysis-ik-7.17.10.zip
     networks:
       - app-network
     healthcheck:
       test: ["CMD-SHELL", "curl -u elastic:elastic_password -f http://localhost:9200 || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 40s
+      retries: 10
     command: >
       /bin/bash -c "
-        bin/elasticsearch-plugin install --batch file:///usr/share/elasticsearch/elasticsearch-analysis-ik-7.17.9.zip &&
+        if [ ! -d /usr/share/elasticsearch/plugins/analysis-ik ]; then
+          bin/elasticsearch-plugin install --batch file:///usr/share/elasticsearch/elasticsearch-analysis-ik-7.17.10.zip;
+        fi &&
         /usr/local/bin/docker-entrypoint.sh
       "
-
 volumes:
   es-data:
 
