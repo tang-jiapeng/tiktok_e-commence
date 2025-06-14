@@ -41,9 +41,13 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 	// 解析数据
 	searchData, _ := io.ReadAll(search.Body)
 	elasticSearchVo := vo.ProductSearchAllDataVo{}
-	convertErr := json.Unmarshal(searchData, &elasticSearchVo)
-	if convertErr != nil {
-		return nil, convertErr
+	err = json.Unmarshal(searchData, &elasticSearchVo)
+	if err != nil {
+		resp = &product.SearchProductsResp{
+			StatusCode: 2013,
+			StatusMsg:  constant.GetMsg(2013),
+		}
+		return
 	}
 	productHitsList := elasticSearchVo.Hits.Hits
 	var products = []*product.Product{}

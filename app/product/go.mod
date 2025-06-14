@@ -5,6 +5,7 @@ go 1.23.1
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
+	github.com/bytedance/sonic v1.13.2
 	github.com/cloudwego/hertz v0.10.0
 	github.com/cloudwego/kitex v0.13.1
 	github.com/elastic/go-elasticsearch/v7 v7.17.10
@@ -25,7 +26,6 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/bytedance/gopkg v0.1.2 // indirect
-	github.com/bytedance/sonic v1.13.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect

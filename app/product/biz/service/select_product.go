@@ -22,7 +22,11 @@ func (s *SelectProductService) Run(req *product.SelectProductReq) (resp *product
 	pro, err := model.SelectProduct(mysql.DB, s.ctx, req.Id)
 	if err != nil {
 		klog.Error("mysql select product error:%v", err)
-		return nil, err
+		resp = &product.SelectProductResp{
+			StatusCode: 2003,
+			StatusMsg:  constant.GetMsg(2003),
+		}
+		return
 	}
 
 	return &product.SelectProductResp{

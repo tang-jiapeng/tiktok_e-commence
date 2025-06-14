@@ -17,10 +17,8 @@ func NewDeleteProductService(ctx context.Context) *DeleteProductService {
 
 // Run create note info
 func (s *DeleteProductService) Run(req *product.DeleteProductReq) (resp *product.DeleteProductResp, err error) {
-
-	deleteErr := model.DeleteProduct(mysql.DB, s.ctx, req.Id)
-	if deleteErr != nil {
-		err = deleteErr
+	err = model.DeleteProduct(mysql.DB, s.ctx, req.Id)
+	if err != nil {
 		resp = &product.DeleteProductResp{
 			StatusCode: 2001,
 			StatusMsg:  constant.GetMsg(2001),

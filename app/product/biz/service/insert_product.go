@@ -30,10 +30,13 @@ func (s *InsertProductService) Run(req *product.InsertProductReq) (resp *product
 		LockStock:   req.Stock,
 	}
 
-	insertErr := model.CreateProduct(mysql.DB, s.ctx, &pro)
-	if insertErr != nil {
-		klog.Error("insert product error:%v", insertErr)
-		return nil, insertErr
+	err = model.CreateProduct(mysql.DB, s.ctx, &pro)
+	if err != nil {
+		klog.Error("insert product error:%v", err)
+		resp = &product.InsertProductResp{
+			StatusCode: 2002,
+			StatusMsg:  constant.GetMsg(2002),
+		}
 	}
 
 	//TODO 发送到kafka
