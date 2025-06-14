@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package api.product;
+
+option go_package = "api/product";
+
+import "api.proto";
+
+message CategorySelectRequest {
+  int64 category_id = 1[(api.form) = "categoryId"];
+}
+
+message CategorySelectResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+  Category categories = 3;
+}
+
+message CategoryInsertRequest {
+  string name = 1[(api.form) = "name"];
+  string description = 2[(api.form) = "description"];
+}
+
+message CategoryInsertResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+}
+
+message CategoryDeleteRequest {
+  int64 categoryId = 1[(api.form)= "categoryId"];
+}
+
+message CategoryDeleteResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+}
+
+message CategoryUpdateRequest {
+  int64 category_id = 1[(api.form)= "categoryId"];
+  string name = 2[(api.form)= "name"];
+  string description = 3[(api.form)= "description"];
+}
+
+message CategoryUpdateResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+}
+
+message Category {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+}
+

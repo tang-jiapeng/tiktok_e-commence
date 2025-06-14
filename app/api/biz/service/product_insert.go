@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"tiktok_e-commerce/api/infra/rpc"
+	rpcproduct "tiktok_e-commerce/rpc_gen/kitex_gen/product"
+
+	product "tiktok_e-commerce/api/hertz_gen/api/product"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	product "tiktok_e-commerce/api/hertz_gen/api/product"
 )
 
 type ProductInsertService struct {
@@ -17,10 +20,17 @@ func NewProductInsertService(Context context.Context, RequestContext *app.Reques
 }
 
 func (h *ProductInsertService) Run(req *product.ProductInsertRequest) (resp *product.ProductInsertResponse, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
+	productReq := rpcproduct.InsertProductReq{
+		Name:        req.Name,
+		Description: req.Description,
+		Picture:     req.Picture,
+		Price:       req.Price,
+		Stock:       req.Stock,
+	}
+	insertProduct, err := rpc.ProductClient.InsertProduct(h.Context, &productReq)
+	resp = &product.ProductInsertResponse{
+		StatusCode: insertProduct.StatusCode,
+		StatusMsg:  insertProduct.StatusMsg,
+	}
 	return
 }

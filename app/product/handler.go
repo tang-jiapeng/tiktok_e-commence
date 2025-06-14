@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 	"tiktok_e-commerce/product/biz/service"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/product"
 )
 
 // ProductCatalogServiceImpl implements the last service interface defined in the IDL.
@@ -54,6 +54,34 @@ func (s *ProductCatalogServiceImpl) DeleteProduct(ctx context.Context, req *prod
 // UpdateProduct implements the ProductCatalogServiceImpl interface.
 func (s *ProductCatalogServiceImpl) UpdateProduct(ctx context.Context, req *product.UpdateProductReq) (resp *product.UpdateProductResp, err error) {
 	resp, err = service.NewUpdateProductService(ctx).Run(req)
+
+	return resp, err
+}
+
+// SelectCategory implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) SelectCategory(ctx context.Context, req *product.CategorySelectReq) (resp *product.CategorySelectResp, err error) {
+	resp, err = service.NewSelectCategoryService(ctx).Run(req)
+
+	return resp, err
+}
+
+// InsertCategory implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) InsertCategory(ctx context.Context, req *product.CategoryInsertReq) (resp *product.CategoryInsertResp, err error) {
+	resp, err = service.NewInsertCategoryService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DeleteCategory implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) DeleteCategory(ctx context.Context, req *product.CategoryDeleteReq) (resp *product.CategoryDeleteResp, err error) {
+	resp, err = service.NewDeleteCategoryService(ctx).Run(req)
+
+	return resp, err
+}
+
+// UpdateCategory implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) UpdateCategory(ctx context.Context, req *product.CategoryUpdateReq) (resp *product.CategoryUpdateResp, err error) {
+	resp, err = service.NewUpdateCategoryService(ctx).Run(req)
 
 	return resp, err
 }

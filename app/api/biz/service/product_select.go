@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"tiktok_e-commerce/api/infra/rpc"
+	rpcproduct "tiktok_e-commerce/rpc_gen/kitex_gen/product"
+
+	product "tiktok_e-commerce/api/hertz_gen/api/product"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	product "tiktok_e-commerce/api/hertz_gen/api/product"
 )
 
 type ProductSelectService struct {
@@ -17,10 +20,27 @@ func NewProductSelectService(Context context.Context, RequestContext *app.Reques
 }
 
 func (h *ProductSelectService) Run(req *product.ProductSelectRequest) (resp *product.ProductSelectResponse, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
+	selectProduct, err := rpc.ProductClient.SelectProduct(h.Context, &rpcproduct.SelectProductReq{Id: req.Id})
+	if err != nil {
+		resp = &product.ProductSelectResponse{
+			StatusCode: selectProduct.StatusCode,
+			StatusMsg:  selectProduct.StatusMsg,
+		}
+		return
+	}
+	resp = &product.ProductSelectResponse{
+		StatusCode: selectProduct.StatusCode,
+		StatusMsg:  selectProduct.StatusMsg,
+		Product: &product.Product{
+			Id:            selectProduct.Product.Id,
+			Name:          selectProduct.Product.Name,
+			Description:   selectProduct.Product.Description,
+			Price:         selectProduct.Product.Price,
+			Stock:         selectProduct.Product.Stock,
+			Sale:          selectProduct.Product.Sale,
+			PublishStatus: selectProduct.Product.PublishStatus,
+			Picture:       selectProduct.Product.Picture,
+		},
+	}
 	return
 }

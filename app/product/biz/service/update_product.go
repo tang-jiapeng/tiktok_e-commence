@@ -6,6 +6,8 @@ import (
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
+
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type UpdateProductService struct {
@@ -28,6 +30,7 @@ func (s *UpdateProductService) Run(req *product.UpdateProductReq) (resp *product
 		LockStock:   req.Stock,
 	})
 	if err != nil {
+		klog.Error("update category failed, error:%v", err)
 		resp = &product.UpdateProductResp{
 			StatusCode: 2000,
 			StatusMsg:  constant.GetMsg(2000),

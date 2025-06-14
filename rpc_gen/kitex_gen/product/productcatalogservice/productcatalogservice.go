@@ -64,6 +64,34 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"SelectCategory": kitex.NewMethodInfo(
+		selectCategoryHandler,
+		newSelectCategoryArgs,
+		newSelectCategoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"InsertCategory": kitex.NewMethodInfo(
+		insertCategoryHandler,
+		newInsertCategoryArgs,
+		newInsertCategoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"DeleteCategory": kitex.NewMethodInfo(
+		deleteCategoryHandler,
+		newDeleteCategoryArgs,
+		newDeleteCategoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"UpdateCategory": kitex.NewMethodInfo(
+		updateCategoryHandler,
+		newUpdateCategoryArgs,
+		newUpdateCategoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -1201,6 +1229,618 @@ func (p *UpdateProductResult) GetResult() interface{} {
 	return p.Success
 }
 
+func selectCategoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.CategorySelectReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).SelectCategory(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *SelectCategoryArgs:
+		success, err := handler.(product.ProductCatalogService).SelectCategory(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*SelectCategoryResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newSelectCategoryArgs() interface{} {
+	return &SelectCategoryArgs{}
+}
+
+func newSelectCategoryResult() interface{} {
+	return &SelectCategoryResult{}
+}
+
+type SelectCategoryArgs struct {
+	Req *product.CategorySelectReq
+}
+
+func (p *SelectCategoryArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.CategorySelectReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *SelectCategoryArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *SelectCategoryArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *SelectCategoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *SelectCategoryArgs) Unmarshal(in []byte) error {
+	msg := new(product.CategorySelectReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SelectCategoryArgs_Req_DEFAULT *product.CategorySelectReq
+
+func (p *SelectCategoryArgs) GetReq() *product.CategorySelectReq {
+	if !p.IsSetReq() {
+		return SelectCategoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SelectCategoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SelectCategoryArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type SelectCategoryResult struct {
+	Success *product.CategorySelectResp
+}
+
+var SelectCategoryResult_Success_DEFAULT *product.CategorySelectResp
+
+func (p *SelectCategoryResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.CategorySelectResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *SelectCategoryResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *SelectCategoryResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *SelectCategoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *SelectCategoryResult) Unmarshal(in []byte) error {
+	msg := new(product.CategorySelectResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SelectCategoryResult) GetSuccess() *product.CategorySelectResp {
+	if !p.IsSetSuccess() {
+		return SelectCategoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SelectCategoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.CategorySelectResp)
+}
+
+func (p *SelectCategoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SelectCategoryResult) GetResult() interface{} {
+	return p.Success
+}
+
+func insertCategoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.CategoryInsertReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).InsertCategory(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *InsertCategoryArgs:
+		success, err := handler.(product.ProductCatalogService).InsertCategory(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*InsertCategoryResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newInsertCategoryArgs() interface{} {
+	return &InsertCategoryArgs{}
+}
+
+func newInsertCategoryResult() interface{} {
+	return &InsertCategoryResult{}
+}
+
+type InsertCategoryArgs struct {
+	Req *product.CategoryInsertReq
+}
+
+func (p *InsertCategoryArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.CategoryInsertReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *InsertCategoryArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *InsertCategoryArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *InsertCategoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *InsertCategoryArgs) Unmarshal(in []byte) error {
+	msg := new(product.CategoryInsertReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var InsertCategoryArgs_Req_DEFAULT *product.CategoryInsertReq
+
+func (p *InsertCategoryArgs) GetReq() *product.CategoryInsertReq {
+	if !p.IsSetReq() {
+		return InsertCategoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *InsertCategoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *InsertCategoryArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type InsertCategoryResult struct {
+	Success *product.CategoryInsertResp
+}
+
+var InsertCategoryResult_Success_DEFAULT *product.CategoryInsertResp
+
+func (p *InsertCategoryResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.CategoryInsertResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *InsertCategoryResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *InsertCategoryResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *InsertCategoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *InsertCategoryResult) Unmarshal(in []byte) error {
+	msg := new(product.CategoryInsertResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *InsertCategoryResult) GetSuccess() *product.CategoryInsertResp {
+	if !p.IsSetSuccess() {
+		return InsertCategoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *InsertCategoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.CategoryInsertResp)
+}
+
+func (p *InsertCategoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *InsertCategoryResult) GetResult() interface{} {
+	return p.Success
+}
+
+func deleteCategoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.CategoryDeleteReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).DeleteCategory(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteCategoryArgs:
+		success, err := handler.(product.ProductCatalogService).DeleteCategory(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteCategoryResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteCategoryArgs() interface{} {
+	return &DeleteCategoryArgs{}
+}
+
+func newDeleteCategoryResult() interface{} {
+	return &DeleteCategoryResult{}
+}
+
+type DeleteCategoryArgs struct {
+	Req *product.CategoryDeleteReq
+}
+
+func (p *DeleteCategoryArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.CategoryDeleteReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *DeleteCategoryArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *DeleteCategoryArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *DeleteCategoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteCategoryArgs) Unmarshal(in []byte) error {
+	msg := new(product.CategoryDeleteReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DeleteCategoryArgs_Req_DEFAULT *product.CategoryDeleteReq
+
+func (p *DeleteCategoryArgs) GetReq() *product.CategoryDeleteReq {
+	if !p.IsSetReq() {
+		return DeleteCategoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DeleteCategoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteCategoryArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteCategoryResult struct {
+	Success *product.CategoryDeleteResp
+}
+
+var DeleteCategoryResult_Success_DEFAULT *product.CategoryDeleteResp
+
+func (p *DeleteCategoryResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.CategoryDeleteResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *DeleteCategoryResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *DeleteCategoryResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *DeleteCategoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteCategoryResult) Unmarshal(in []byte) error {
+	msg := new(product.CategoryDeleteResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteCategoryResult) GetSuccess() *product.CategoryDeleteResp {
+	if !p.IsSetSuccess() {
+		return DeleteCategoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteCategoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.CategoryDeleteResp)
+}
+
+func (p *DeleteCategoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteCategoryResult) GetResult() interface{} {
+	return p.Success
+}
+
+func updateCategoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.CategoryUpdateReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).UpdateCategory(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateCategoryArgs:
+		success, err := handler.(product.ProductCatalogService).UpdateCategory(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateCategoryResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newUpdateCategoryArgs() interface{} {
+	return &UpdateCategoryArgs{}
+}
+
+func newUpdateCategoryResult() interface{} {
+	return &UpdateCategoryResult{}
+}
+
+type UpdateCategoryArgs struct {
+	Req *product.CategoryUpdateReq
+}
+
+func (p *UpdateCategoryArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.CategoryUpdateReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *UpdateCategoryArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *UpdateCategoryArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *UpdateCategoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateCategoryArgs) Unmarshal(in []byte) error {
+	msg := new(product.CategoryUpdateReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateCategoryArgs_Req_DEFAULT *product.CategoryUpdateReq
+
+func (p *UpdateCategoryArgs) GetReq() *product.CategoryUpdateReq {
+	if !p.IsSetReq() {
+		return UpdateCategoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateCategoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateCategoryArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateCategoryResult struct {
+	Success *product.CategoryUpdateResp
+}
+
+var UpdateCategoryResult_Success_DEFAULT *product.CategoryUpdateResp
+
+func (p *UpdateCategoryResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.CategoryUpdateResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *UpdateCategoryResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *UpdateCategoryResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *UpdateCategoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateCategoryResult) Unmarshal(in []byte) error {
+	msg := new(product.CategoryUpdateResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateCategoryResult) GetSuccess() *product.CategoryUpdateResp {
+	if !p.IsSetSuccess() {
+		return UpdateCategoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateCategoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.CategoryUpdateResp)
+}
+
+func (p *UpdateCategoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateCategoryResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1276,6 +1916,46 @@ func (p *kClient) UpdateProduct(ctx context.Context, Req *product.UpdateProductR
 	_args.Req = Req
 	var _result UpdateProductResult
 	if err = p.c.Call(ctx, "UpdateProduct", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) SelectCategory(ctx context.Context, Req *product.CategorySelectReq) (r *product.CategorySelectResp, err error) {
+	var _args SelectCategoryArgs
+	_args.Req = Req
+	var _result SelectCategoryResult
+	if err = p.c.Call(ctx, "SelectCategory", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) InsertCategory(ctx context.Context, Req *product.CategoryInsertReq) (r *product.CategoryInsertResp, err error) {
+	var _args InsertCategoryArgs
+	_args.Req = Req
+	var _result InsertCategoryResult
+	if err = p.c.Call(ctx, "InsertCategory", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteCategory(ctx context.Context, Req *product.CategoryDeleteReq) (r *product.CategoryDeleteResp, err error) {
+	var _args DeleteCategoryArgs
+	_args.Req = Req
+	var _result DeleteCategoryResult
+	if err = p.c.Call(ctx, "DeleteCategory", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UpdateCategory(ctx context.Context, Req *product.CategoryUpdateReq) (r *product.CategoryUpdateResp, err error) {
+	var _args UpdateCategoryArgs
+	_args.Req = Req
+	var _result UpdateCategoryResult
+	if err = p.c.Call(ctx, "UpdateCategory", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

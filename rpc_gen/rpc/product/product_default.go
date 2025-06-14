@@ -2,9 +2,9 @@ package product
 
 import (
 	"context"
-	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 )
 
 func ListProducts(ctx context.Context, req *product.ListProductsReq, callOptions ...callopt.Option) (resp *product.ListProductsResp, err error) {
@@ -65,6 +65,42 @@ func UpdateProduct(ctx context.Context, req *product.UpdateProductReq, callOptio
 	resp, err = defaultClient.UpdateProduct(ctx, req, callOptions...)
 	if err != nil {
 		klog.CtxErrorf(ctx, "UpdateProduct call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func SelectCategory(ctx context.Context, req *product.CategorySelectReq, callOptions ...callopt.Option) (resp *product.CategorySelectResp, err error) {
+	resp, err = defaultClient.SelectCategory(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "SelectCategory call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func InsertCategory(ctx context.Context, req *product.CategoryInsertReq, callOptions ...callopt.Option) (resp *product.CategoryInsertResp, err error) {
+	resp, err = defaultClient.InsertCategory(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "InsertCategory call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func DeleteCategory(ctx context.Context, req *product.CategoryDeleteReq, callOptions ...callopt.Option) (resp *product.CategoryDeleteResp, err error) {
+	resp, err = defaultClient.DeleteCategory(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteCategory call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func UpdateCategory(ctx context.Context, req *product.CategoryUpdateReq, callOptions ...callopt.Option) (resp *product.CategoryUpdateResp, err error) {
+	resp, err = defaultClient.UpdateCategory(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "UpdateCategory call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

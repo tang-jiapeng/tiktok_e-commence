@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "/product";
+
+service CategoryService {
+  rpc SelectCategory(CategorySelectReq) returns (CategorySelectResp) {}
+}
+
+message CategorySelectReq {
+  int64 category_id = 1;
+}
+
+message CategorySelectResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+  Category category = 3;
+}
+
+message CategoryInsertReq {
+  string name = 1;
+  string description = 2;
+}
+
+message CategoryInsertResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message CategoryDeleteReq{
+  int64 category_id = 1;
+}
+
+message CategoryDeleteResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message CategoryUpdateReq{
+  int64 category_id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message CategoryUpdateResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message Category {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+}

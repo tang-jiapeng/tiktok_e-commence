@@ -37,12 +37,14 @@ func (s *InsertProductService) Run(req *product.InsertProductReq) (resp *product
 			StatusCode: 2002,
 			StatusMsg:  constant.GetMsg(2002),
 		}
+		return
 	}
 
 	//TODO 发送到kafka
 
-	return &product.InsertProductResp{
+	resp = &product.InsertProductResp{
 		StatusCode: 0,
 		StatusMsg:  constant.GetMsg(0),
-	}, nil
+	}
+	return
 }
