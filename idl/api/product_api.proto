@@ -86,6 +86,15 @@ message ProductUpdateResponse {
   string status_msg = 2;
 }
 
+message ProductSelectListRequest {
+  repeated int64 id = 1[(api.form)= "ids"];
+}
+message ProductSelectListResponse {
+  int32 status_code = 1[(api.go_tag) = 'json:"status_code"'];
+  string status_msg = 2;
+  repeated Product products = 3;
+}
+
 service ProductService {
   rpc Search(ProductRequest) returns (ProductResponse) {
     option (api.post) = "/product/search";
@@ -105,6 +114,10 @@ service ProductService {
 
   rpc ProductUpdate(ProductUpdateRequest) returns (ProductUpdateResponse) {
     option (api.post) = "/product/update";
+  }
+
+  rpc ProductSelectList(ProductSelectListRequest) returns (ProductSelectListResponse) {
+    option (api.post) = "/product/selectList";
   }
 
   rpc CategorySelect(CategorySelectRequest) returns (CategorySelectResponse) {

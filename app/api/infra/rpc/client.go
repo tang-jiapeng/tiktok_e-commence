@@ -5,6 +5,7 @@ import (
 	"sync"
 	"tiktok_e-commerce/common/clientsuite"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth/authservice"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/cart/cartservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/payment/paymentservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
@@ -19,6 +20,7 @@ var (
 	UserClient    userservice.Client
 	PaymentClient paymentservice.Client
 	ProductClient productcatalogservice.Client
+	CartClient    cartservice.Client
 	once          sync.Once
 	err           error
 	registryAddr  string
@@ -64,5 +66,12 @@ func initPaymentClient() {
 	PaymentClient, err = paymentservice.NewClient("payment-service", commonSuite, client.WithRPCTimeout(3*time.Second))
 	if err != nil {
 		hlog.Fatal("init payment client failed: ", err)
+	}
+}
+
+func initCartClient() {
+	CartClient, err = cartservice.NewClient("cart-service", commonSuite, client.WithRPCTimeout(3*time.Second))
+	if err != nil {
+		hlog.Fatal("init cart client failed: ", err)
 	}
 }
