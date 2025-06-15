@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "/product";
+
+message BrandSelectReq {
+  int64 brand_id = 1;
+  string name = 2;
+  string description = 3;
+  string icon = 4;
+}
+
+message BrandSelectResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+  Brand brand = 3;
+}
+message Brand {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string icon = 4;
+}
+
+message BrandInsertReq{
+  string name = 1;
+  string description = 2;
+  string icon = 3;
+}
+
+message BrandInsertResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message BrandDeleteReq{
+  int64 brand_id = 1;
+}
+
+message BrandDeleteResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}
+
+message BrandUpdateReq{
+  int64 brand_id = 1;
+  string name = 2;
+  string description = 3;
+  string icon = 4;
+}
+
+message BrandUpdateResp {
+  int32 status_code = 1;
+  string status_msg = 2;
+}

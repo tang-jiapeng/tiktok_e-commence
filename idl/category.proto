@@ -4,10 +4,6 @@ package product;
 
 option go_package = "/product";
 
-service CategoryService {
-  rpc SelectCategory(CategorySelectReq) returns (CategorySelectResp) {}
-}
-
 message CategorySelectReq {
   int64 category_id = 1;
 }

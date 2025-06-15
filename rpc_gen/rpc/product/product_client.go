@@ -3,6 +3,7 @@ package product
 import (
 	"context"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
@@ -22,6 +23,10 @@ type RPCClient interface {
 	InsertCategory(ctx context.Context, Req *product.CategoryInsertReq, callOptions ...callopt.Option) (r *product.CategoryInsertResp, err error)
 	DeleteCategory(ctx context.Context, Req *product.CategoryDeleteReq, callOptions ...callopt.Option) (r *product.CategoryDeleteResp, err error)
 	UpdateCategory(ctx context.Context, Req *product.CategoryUpdateReq, callOptions ...callopt.Option) (r *product.CategoryUpdateResp, err error)
+	SelectBrand(ctx context.Context, Req *product.BrandSelectReq, callOptions ...callopt.Option) (r *product.BrandSelectResp, err error)
+	InsertBrand(ctx context.Context, Req *product.BrandInsertReq, callOptions ...callopt.Option) (r *product.BrandInsertResp, err error)
+	DeleteBrand(ctx context.Context, Req *product.BrandDeleteReq, callOptions ...callopt.Option) (r *product.BrandDeleteResp, err error)
+	UpdateBrand(ctx context.Context, Req *product.BrandUpdateReq, callOptions ...callopt.Option) (r *product.BrandUpdateResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -92,4 +97,20 @@ func (c *clientImpl) DeleteCategory(ctx context.Context, Req *product.CategoryDe
 
 func (c *clientImpl) UpdateCategory(ctx context.Context, Req *product.CategoryUpdateReq, callOptions ...callopt.Option) (r *product.CategoryUpdateResp, err error) {
 	return c.kitexClient.UpdateCategory(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) SelectBrand(ctx context.Context, Req *product.BrandSelectReq, callOptions ...callopt.Option) (r *product.BrandSelectResp, err error) {
+	return c.kitexClient.SelectBrand(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) InsertBrand(ctx context.Context, Req *product.BrandInsertReq, callOptions ...callopt.Option) (r *product.BrandInsertResp, err error) {
+	return c.kitexClient.InsertBrand(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) DeleteBrand(ctx context.Context, Req *product.BrandDeleteReq, callOptions ...callopt.Option) (r *product.BrandDeleteResp, err error) {
+	return c.kitexClient.DeleteBrand(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) UpdateBrand(ctx context.Context, Req *product.BrandUpdateReq, callOptions ...callopt.Option) (r *product.BrandUpdateResp, err error) {
+	return c.kitexClient.UpdateBrand(ctx, Req, callOptions...)
 }
