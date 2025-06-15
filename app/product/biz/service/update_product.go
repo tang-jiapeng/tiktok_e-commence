@@ -28,6 +28,8 @@ func (s *UpdateProductService) Run(req *product.UpdateProductReq) (resp *product
 		Sale:        req.Sale,
 		PublicState: req.PublishStatus,
 		LockStock:   req.Stock,
+		CategoryId:  req.CategoryId,
+		BrandId:     req.BrandId,
 	})
 	if err != nil {
 		klog.Error("update category failed, error:%v", err)

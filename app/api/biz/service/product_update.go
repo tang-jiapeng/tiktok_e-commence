@@ -30,6 +30,8 @@ func (h *ProductUpdateService) Run(req *product.ProductUpdateRequest) (resp *pro
 		Stock:         req.Stock,
 		Sale:          req.Sale,
 		PublishStatus: req.PublishStatus,
+		BrandId:       req.BrandId,
+		CategoryId:    req.CategoryId,
 	})
 	resp = &product.ProductUpdateResponse{
 		StatusCode: updateProduct.StatusCode,

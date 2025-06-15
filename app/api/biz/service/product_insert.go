@@ -26,6 +26,8 @@ func (h *ProductInsertService) Run(req *product.ProductInsertRequest) (resp *pro
 		Picture:     req.Picture,
 		Price:       req.Price,
 		Stock:       req.Stock,
+		CategoryId:  req.CategoryId,
+		BrandId:     req.BrandId,
 	}
 	insertProduct, err := rpc.ProductClient.InsertProduct(h.Context, &productReq)
 	resp = &product.ProductInsertResponse{

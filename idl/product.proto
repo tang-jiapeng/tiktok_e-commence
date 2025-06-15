@@ -45,6 +45,8 @@ message Product {
   int64 stock = 7;
   int64 sale = 8;
   uint32 publish_status = 9;
+  int64 brand_id = 10;
+  int64 category_id = 11;
 }
 
 message ListProductsResp {
@@ -79,6 +81,8 @@ message InsertProductReq {
   string picture = 3;
   float price = 4;
   int64 stock = 5;
+  int64 brand_id = 6;
+  int64 category_id = 7;
 }
 
 message InsertProductResp {
@@ -116,6 +120,8 @@ message UpdateProductReq {
   int64 stock = 7;
   int64 sale = 8;
   uint32 publish_status = 9;
+  int64 brand_id = 10;
+  int64 category_id = 11;
 }
 
 message UpdateProductResp {

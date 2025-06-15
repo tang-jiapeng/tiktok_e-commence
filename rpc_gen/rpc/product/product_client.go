@@ -3,10 +3,10 @@ package product
 import (
 	"context"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
-	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+	
 )
 
 type RPCClient interface {

@@ -28,6 +28,8 @@ func (s *InsertProductService) Run(req *product.InsertProductReq) (resp *product
 		Sale:        0,
 		PublicState: 1,
 		LockStock:   req.Stock,
+		CategoryId:  req.CategoryId,
+		BrandId:     req.BrandId,
 	}
 
 	err = model.CreateProduct(mysql.DB, s.ctx, &pro)
