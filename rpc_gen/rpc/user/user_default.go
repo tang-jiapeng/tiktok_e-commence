@@ -2,9 +2,9 @@ package user
 
 import (
 	"context"
-	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 )
 
 func Register(ctx context.Context, req *user.RegisterReq, callOptions ...callopt.Option) (resp *user.RegisterResp, err error) {
@@ -56,6 +56,15 @@ func GetUserRoleById(ctx context.Context, req *user.GetUserRoleByIdReq, callOpti
 	resp, err = defaultClient.GetUserRoleById(ctx, req, callOptions...)
 	if err != nil {
 		klog.CtxErrorf(ctx, "GetUserRoleById call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func AddReceiveAddress(ctx context.Context, req *user.AddReceiveAddressReq, callOptions ...callopt.Option) (resp *user.AddReceiveAddressResp, err error) {
+	resp, err = defaultClient.AddReceiveAddress(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "AddReceiveAddress call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

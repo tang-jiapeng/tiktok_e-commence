@@ -3,6 +3,7 @@ package mysql
 import (
 	"tiktok_e-commerce/user/biz/model"
 	"tiktok_e-commerce/user/conf"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,9 +25,8 @@ func Init() {
 		panic(err)
 	}
 
-	err := DB.AutoMigrate(&model.User{})	
+	err := DB.AutoMigrate(&model.User{}, &model.Address{})
 	if err != nil {
 		panic(err)
 	}
 }
-

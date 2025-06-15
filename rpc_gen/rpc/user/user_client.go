@@ -4,9 +4,9 @@ import (
 	"context"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 
-	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+	
 )
 
 type RPCClient interface {
@@ -18,6 +18,7 @@ type RPCClient interface {
 	UpdateUser(ctx context.Context, Req *user.UpdateUserReq, callOptions ...callopt.Option) (r *user.UpdateUserResp, err error)
 	DeleteUser(ctx context.Context, Req *user.DeleteUserReq, callOptions ...callopt.Option) (r *user.DeleteUserResp, err error)
 	GetUserRoleById(ctx context.Context, Req *user.GetUserRoleByIdReq, callOptions ...callopt.Option) (r *user.GetUserRoleByIdResp, err error)
+	AddReceiveAddress(ctx context.Context, Req *user.AddReceiveAddressReq, callOptions ...callopt.Option) (r *user.AddReceiveAddressResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -68,4 +69,8 @@ func (c *clientImpl) DeleteUser(ctx context.Context, Req *user.DeleteUserReq, ca
 
 func (c *clientImpl) GetUserRoleById(ctx context.Context, Req *user.GetUserRoleByIdReq, callOptions ...callopt.Option) (r *user.GetUserRoleByIdResp, err error) {
 	return c.kitexClient.GetUserRoleById(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) AddReceiveAddress(ctx context.Context, Req *user.AddReceiveAddressReq, callOptions ...callopt.Option) (r *user.AddReceiveAddressResp, err error) {
+	return c.kitexClient.AddReceiveAddress(ctx, Req, callOptions...)
 }

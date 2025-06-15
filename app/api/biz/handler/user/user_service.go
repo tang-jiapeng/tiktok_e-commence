@@ -190,3 +190,23 @@ func AddPermission(ctx context.Context, c *app.RequestContext) {
 	}
 	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
 }
+
+// AddReceiveAddress .
+// @router /user/address [POST]
+func AddReceiveAddress(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.AddReceiveAddressRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewAddReceiveAddressService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
