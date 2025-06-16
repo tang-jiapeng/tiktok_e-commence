@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"tiktok_e-commerce/product/infra/kafka"
 	"time"
 
 	"tiktok_e-commerce/common/infra/nacos"
@@ -28,6 +29,7 @@ func main() {
 	dal.Init()
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	elastic.InitClient()
+	kafka.InitClient()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)

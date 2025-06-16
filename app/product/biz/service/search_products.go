@@ -25,7 +25,7 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
 	queryBody := vo.ProductSearchQueryBody{
 		Query: vo.ProductSearchQuery{
-			MutiMatch: vo.ProductSearchMultiMatchQuery{
+			MultiMatch: vo.ProductSearchMultiMatchQuery{
 				Query:  req.Query,
 				Fields: []string{"name", "description"},
 			},
@@ -37,7 +37,7 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 	search, _ := esapi.SearchRequest{
 		Index: []string{"product"},
 		Body:  strings.NewReader(string(jsonData)),
-	}.Do(context.Background(), &elastic.ElasticClient)
+	}.Do(context.Background(), elastic.ElasticClient)
 	// 解析数据
 	searchData, _ := io.ReadAll(search.Body)
 	elasticSearchVo := vo.ProductSearchAllDataVo{}

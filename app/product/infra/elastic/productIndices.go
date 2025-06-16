@@ -82,7 +82,7 @@ func ProduceIndicesInit() {
 	// 检查 product 索引是否存在
 	productIndicesExist, err := esapi.IndicesExistsRequest{
 		Index: []string{"product"},
-	}.Do(context.Background(), &ElasticClient)
+	}.Do(context.Background(), ElasticClient)
 	if err != nil {
 		klog.Errorf("检查索引存在失败: %v", err)
 		return
@@ -97,7 +97,7 @@ func ProduceIndicesInit() {
 		create, err := esapi.IndicesCreateRequest{
 			Index: "product",
 			Body:  strings.NewReader(string(SettingData)),
-		}.Do(context.Background(), &ElasticClient)
+		}.Do(context.Background(), ElasticClient)
 		if err != nil {
 			klog.Errorf("创建索引失败: %v", err)
 		}
@@ -146,7 +146,7 @@ func SyncProductToES() error {
 			Index:   "product",
 			Body:    strings.NewReader(string(jsonData)),
 			Refresh: "true", // 立即刷新，确保数据可见
-		}.Do(context.Background(), &ElasticClient)
+		}.Do(context.Background(), ElasticClient)
 	}
 
 	return nil
