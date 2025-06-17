@@ -5,6 +5,7 @@ import (
 	"tiktok_e-commerce/common/constant"
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
+	kf "tiktok_e-commerce/product/infra/kafka"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -19,7 +20,7 @@ func NewUpdateProductService(ctx context.Context) *UpdateProductService {
 
 // Run create note info
 func (s *UpdateProductService) Run(req *product.UpdateProductReq) (resp *product.UpdateProductResp, err error) {
-	err = model.UpdateProduct(mysql.DB, s.ctx, &model.Product{
+	pro := model.Product{
 		Name:        req.Name,
 		Description: req.Description,
 		Picture:     req.Picture,
@@ -30,15 +31,22 @@ func (s *UpdateProductService) Run(req *product.UpdateProductReq) (resp *product
 		LockStock:   req.Stock,
 		CategoryId:  req.CategoryId,
 		BrandId:     req.BrandId,
-	})
+	}
+	err = model.UpdateProduct(mysql.DB, s.ctx, &pro)
 	if err != nil {
-		klog.Error("update category failed, error:%v", err)
 		resp = &product.UpdateProductResp{
 			StatusCode: 2000,
 			StatusMsg:  constant.GetMsg(2000),
 		}
 		return
 	}
+	// 发送到kafka
+	go func() {
+		err := kf.UpdateProduct(&pro)
+		if err != nil {
+			klog.Error("update product error:%v", err)
+		}
+	}()
 	resp = &product.UpdateProductResp{
 		StatusCode: 0,
 		StatusMsg:  constant.GetMsg(0),

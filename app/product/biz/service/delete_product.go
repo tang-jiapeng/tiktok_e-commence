@@ -5,7 +5,10 @@ import (
 	"tiktok_e-commerce/common/constant"
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
+	kf "tiktok_e-commerce/product/infra/kafka"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
+
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type DeleteProductService struct {
@@ -25,6 +28,17 @@ func (s *DeleteProductService) Run(req *product.DeleteProductReq) (resp *product
 		}
 		return
 	}
+	//发送到kafka
+	defer func() {
+		err := kf.DeleteProduct(&model.Product{
+			Base: model.Base{
+				ID: req.Id,
+			},
+		})
+		if err != nil {
+			klog.Error("delete product error:%v", err)
+		}
+	}()
 	resp = &product.DeleteProductResp{
 		StatusCode: 0,
 		StatusMsg:  constant.GetMsg(0),

@@ -5,6 +5,7 @@ import (
 	"tiktok_e-commerce/common/constant"
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
+	kf "tiktok_e-commerce/product/infra/kafka"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -42,7 +43,13 @@ func (s *InsertProductService) Run(req *product.InsertProductReq) (resp *product
 		return
 	}
 
-	//TODO 发送到kafka
+	//发送到kafka
+	defer func() {
+		err := kf.AddProduct(&pro)
+		if err != nil {
+			klog.Error("insert product error:%v", err)
+		}
+	}()
 
 	resp = &product.InsertProductResp{
 		StatusCode: 0,
