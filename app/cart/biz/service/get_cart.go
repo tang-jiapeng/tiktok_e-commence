@@ -38,21 +38,40 @@ func (s *GetCartService) Run(req *cart.GetCartReq) (resp *cart.GetCartResp, err 
 	for i, item := range cartItems {
 		productIds[i] = int64(item.ProductId)
 	}
-	productList, err := rpc.ProductClient.SelectProductList(s.ctx, &product.SelectProductListReq{
+	getProductListResp, err := rpc.ProductClient.SelectProductList(s.ctx, &product.SelectProductListReq{
 		Ids: productIds,
 	})
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "rpc查询商品信息失败，req: %v, err: %v", req, err)
 		return nil, errors.WithStack(err)
 	}
+
+	productMap := make(map[int]*product.Product)
+	for _, p := range getProductListResp.Products {
+		productMap[int(p.Id)] = p
+	}
+
 	productItems := make([]*cart.Product, len(cartItems))
 	for i, item := range cartItems {
+		p := productMap[int(item.ProductId)]
+		if p == nil {
+			// 商品不存在，返回空数据
+			productItems[i] = &cart.Product{
+				Id:          item.ProductId,
+				Name:        "",
+				Description: "",
+				Picture:     "",
+				Price:       0,
+				Quantity:    item.Quantity,
+			}
+			continue
+		}
 		productItems[i] = &cart.Product{
 			Id:          item.ProductId,
-			Name:        productList.Products[i].Name,
-			Description: productList.Products[i].Description,
-			Picture:     productList.Products[i].Picture,
-			Price:       productList.Products[i].Price,
+			Name:        p.Name,
+			Description: p.Description,
+			Picture:     p.Picture,
+			Price:       p.Price,
 			Quantity:    item.Quantity,
 		}
 	}
