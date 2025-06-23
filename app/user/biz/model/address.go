@@ -23,6 +23,16 @@ type Address struct {
 	DetailAddress string `gorm:"not null;type:varchar(256);comment:详细地址"`
 }
 
+type AddressInfo struct {
+	Name          string `json:"name"`
+	PhoneNumber   string `json:"phone_number"`
+	DefaultStatus int8   `json:"default_status"`
+	Province      string `json:"province"`
+	City          string `json:"city"`
+	Region        string `json:"region"`
+	DetailAddress string `json:"detail_address"`
+}
+
 func (a Address) TableName() string {
 	return "tb_receive_address"
 }
@@ -43,5 +53,12 @@ func ExistDefaultAddress(db *gorm.DB, ctx context.Context, userId int32) (addres
 func UpdateAddress(db *gorm.DB, ctx context.Context, address Address) (err error) {
 	result := db.WithContext(ctx).Save(&address)
 	err = result.Error
+	return
+}
+
+func GetAdressList(db *gorm.DB, ctx context.Context, userId int32) (addressList []AddressInfo, err error) {
+	err = db.WithContext(ctx).Model(Address{}).
+		Select("name, phone_number, default_status, province, city, region, detail_address").
+		Where(Address{UserId: userId}).Find(&addressList).Error
 	return
 }

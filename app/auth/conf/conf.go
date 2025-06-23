@@ -31,6 +31,7 @@ type Config struct {
 	Registry Registry `yaml:"registry"`
 	Jwt      Jwt      `yaml:"jwt"`
 	Casbin   Casbin   `yaml:"casbin"`
+	Kafka    Kafka    `yaml:"kafka"`
 }
 
 type MySQL struct {
@@ -67,6 +68,14 @@ type Jwt struct {
 
 type Casbin struct {
 	ModelPath string `yaml:"model_path"`
+}
+
+type Kafka struct {
+	BizKafka BizKafka `yaml:"biz_kafka"`
+}
+
+type BizKafka struct {
+	BootstrapServers []string `yaml:"bootstrap_servers"`
 }
 
 // GetConf gets configuration instance
@@ -128,8 +137,8 @@ func initConf() {
 	clientConfig, serviceConfigs := nacosUtils.GetNacosConfig()
 
 	configClient, err := clients.CreateConfigClient(map[string]interface{}{
-		"clientConfig":  clientConfig,
 		"serverConfigs": serviceConfigs,
+		"clientConfig":  clientConfig,
 	})
 
 	if err != nil {

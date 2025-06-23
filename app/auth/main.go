@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"tiktok_e-commerce/auth/infra/kafka"
 	"time"
 
 	"tiktok_e-commerce/auth/biz/dal"
@@ -31,6 +32,7 @@ func main() {
 	dal.Init()
 	casbin.InitCasbin()
 	rpc.InitClient()
+	kafka.Init()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)

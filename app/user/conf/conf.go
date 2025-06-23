@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/kitex-contrib/config-nacos/nacos"
 	"github.com/nacos-group/nacos-sdk-go/vo"
@@ -24,6 +25,7 @@ type Config struct {
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
+	Kafka    Kafka    `yaml:"kafka"`
 }
 
 type MySQL struct {
@@ -50,8 +52,16 @@ type Kitex struct {
 
 type Registry struct {
 	RegistryAddress string `yaml:"registry_address"`
-	Username        string   `yaml:"username"`
-	Password        string   `yaml:"password"`
+	Username        string `yaml:"username"`
+	Password        string `yaml:"password"`
+}
+
+type Kafka struct {
+	BizKafka BizKafka `yaml:"biz_kafka"`
+}
+
+type BizKafka struct {
+	BootstrapServers []string `yaml:"bootstrap_servers"`
 }
 
 // GetConf gets configuration instance

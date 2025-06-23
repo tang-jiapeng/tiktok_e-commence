@@ -6,8 +6,8 @@ import (
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 	"tiktok_e-commerce/user/biz/dal/mysql"
-	"tiktok_e-commerce/user/biz/infra/rpc"
 	"tiktok_e-commerce/user/biz/model"
+	"tiktok_e-commerce/user/infra/rpc"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/pkg/errors"

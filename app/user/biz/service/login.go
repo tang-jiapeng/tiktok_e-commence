@@ -6,8 +6,8 @@ import (
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
 	"tiktok_e-commerce/user/biz/dal/mysql"
-	"tiktok_e-commerce/user/biz/infra/rpc"
 	"tiktok_e-commerce/user/biz/model"
+	"tiktok_e-commerce/user/infra/rpc"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/pkg/errors"
@@ -40,9 +40,9 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 	if bannedResp.IsBanned {
 		resp = &user.LoginResp{
 			StatusCode: 1010,
-			StatusMsg:	constant.GetMsg(1010),
+			StatusMsg:  constant.GetMsg(1010),
 		}
-		return resp , nil 
+		return resp, nil
 	}
 
 	comparePwdErr := bcrypt.CompareHashAndPassword([]byte(loginUser.Password), []byte(req.Password))

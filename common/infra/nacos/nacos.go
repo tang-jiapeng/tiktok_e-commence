@@ -41,7 +41,8 @@ func GetNacosConfig() (constant.ClientConfig, []constant.ServerConfig) {
 		TimeoutMs:   5000,
 		LogLevel:    logLevel,
 	}
-	nacos_ip := os.Getenv("NACOS_ADDR")
+	//nacos_ip := os.Getenv("NACOS_ADDR")
+	nacos_ip := "127.0.0.1"
 	serverConfigs := []constant.ServerConfig{
 		{
 			IpAddr: nacos_ip,

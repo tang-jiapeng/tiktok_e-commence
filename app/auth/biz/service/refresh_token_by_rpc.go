@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"tiktok_e-commerce/auth/infra/kafka/producer"
 	"tiktok_e-commerce/auth/utils/jwt"
 	"tiktok_e-commerce/common/constant"
 	auth "tiktok_e-commerce/rpc_gen/kitex_gen/auth"
@@ -17,7 +18,7 @@ func NewRefreshTokenByRPCService(ctx context.Context) *RefreshTokenByRPCService 
 // Run create note info
 func (s *RefreshTokenByRPCService) Run(req *auth.RefreshTokenReq) (resp *auth.RefreshTokenResp, err error) {
 
-	newAccessToken, newRefreshToken, success := jwt.RefreshAccessToken(req.RefreshToken)
+	userId, newAccessToken, newRefreshToken, success := jwt.RefreshAccessToken(s.ctx, req.RefreshToken)
 	if success {
 		resp = &auth.RefreshTokenResp{
 			StatusCode:   0,
@@ -25,6 +26,7 @@ func (s *RefreshTokenByRPCService) Run(req *auth.RefreshTokenReq) (resp *auth.Re
 			AccessToken:  newAccessToken,
 			RefreshToken: newRefreshToken,
 		}
+		producer.SendUserCacheMessage(userId)
 		return
 	}
 	resp = &auth.RefreshTokenResp{
