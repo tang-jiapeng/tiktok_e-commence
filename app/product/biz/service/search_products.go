@@ -8,6 +8,7 @@ import (
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/dal/redis"
 	"tiktok_e-commerce/product/biz/model"
+	"time"
 
 	"tiktok_e-commerce/common/constant"
 	"tiktok_e-commerce/product/biz/vo"
@@ -30,13 +31,13 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 // Run create note info
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
 	queryBody := vo.ProductSearchQueryBody{
-		Query: vo.ProductSearchQuery{
-			MultiMatch: vo.ProductSearchMultiMatchQuery{
+		Query: &vo.ProductSearchQuery{
+			MultiMatch: &vo.ProductSearchMultiMatchQuery{
 				Query:  req.Query,
 				Fields: []string{"name", "description"},
 			},
 		},
-		Source: vo.ProductSearchSource{
+		Source: &vo.ProductSearchSource{
 			"id",
 		},
 	}
@@ -74,7 +75,7 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 		keys = append(keys, "product:"+strconv.FormatInt(searchIds[i], 10))
 	}
 	//先判断redis是否存在数据，如果存在，则直接返回数据
-	values, err := redis.RedisClient.MGet(s.ctx, keys...).Result()
+	values, err := redis.RedisClient.MGet(context.Background(), keys...).Result()
 	if err != nil {
 		return
 	}
@@ -88,13 +89,9 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 		} else {
 			//解析数据
 			productData := product.Product{}
-			marshal, err := sonic.Marshal(value)
+			err = sonic.UnmarshalString(value.(string), &productData)
 			if err != nil {
-				return
-			}
-			err = json.Unmarshal(marshal, &productData)
-			if err != nil {
-				return
+				return nil, err
 			}
 			products = append(products, &productData)
 		}
@@ -102,9 +99,10 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 	//如果不存在，则从数据库中获取数据，并存入redis
 	if len(missingIds) > 0 {
 		//从数据库中获取数据
-		if list, err := model.SelectProductList(mysql.DB, s.ctx, missingIds); err == nil {
+		list, modelErr := model.SelectProductList(mysql.DB, context.Background(), missingIds)
+		pipeline := redis.RedisClient.Pipeline()
+		if modelErr == nil {
 			missingProducts := make([]*product.Product, len(list))
-			var missingKeysAndValues map[string]product.Product
 			for i := range list {
 				p := product.Product{
 					Id:          list[i].ID,
@@ -118,15 +116,22 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 					BrandId:     list[i].BrandId,
 				}
 				missingProducts[i] = &p
-				missingKeysAndValues["product:"+strconv.FormatInt(list[i].ID, 10)] = p
+				s2 := "product:" + strconv.FormatInt(list[i].ID, 10)
+				marshalString, err := sonic.MarshalString(p)
+				if err != nil {
+					return nil, err
+				}
+				pipeline.Set(context.Background(), s2, marshalString, 1*time.Hour)
 			}
 			products = append(products, missingProducts...)
 			//存入redis
-			if _, err := redis.RedisClient.MSet(s.ctx, missingKeysAndValues).Result(); err != nil {
+			_, redisErr := pipeline.Exec(context.Background())
+			if redisErr != nil {
 				klog.Error("MSet products err:", err)
-				return
+				return nil, redisErr
 			}
 		} else {
+			err = modelErr
 			return
 		}
 	}

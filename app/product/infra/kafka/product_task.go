@@ -67,8 +67,8 @@ func UpdateProduct(product *model.Product) (err error) {
 
 func DeleteProductToElasticSearch(id int64) {
 	body := vo.ProductSearchQueryBody{
-		Query: vo.ProductSearchQuery{
-			Term: vo.ProductSearchTermQuery{
+		Query: &vo.ProductSearchQuery{
+			Term: &vo.ProductSearchTermQuery{
 				"id": id,
 			},
 		},
@@ -87,12 +87,12 @@ func DeleteProductToElasticSearch(id int64) {
 
 func UpdateProductToElasticSearch(product *vo.ProductSendToKafka) {
 	body := vo.ProductSearchQueryBody{
-		Query: vo.ProductSearchQuery{
-			Term: vo.ProductSearchTermQuery{
+		Query: &vo.ProductSearchQuery{
+			Term: &vo.ProductSearchTermQuery{
 				"id": product.ID,
 			},
 		},
-		Doc: vo.ProductSearchDoc{
+		Doc: &vo.ProductSearchDoc{
 			Name:        product.Name,
 			Description: product.Description,
 		},
