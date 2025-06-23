@@ -25,6 +25,7 @@ type Config struct {
 	Registry      Registry      `yaml:"registry"`
 	Elasticsearch ElasticSearch `yaml:"elasticsearch"`
 	Kafka         Kafka         `yaml:"kafka"`
+	XxlJob        XxlJob        `yaml:"xxl_job"`
 }
 
 type MySQL struct {
@@ -69,6 +70,12 @@ type ElasticSearch struct {
 	Port     string `yaml:"port"`
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
+}
+
+type XxlJob struct {
+	XxlJobAddress string `yaml:"xxl_job_address"`
+	ExecutorIp    string `yaml:"executor_ip"`
+	AccessToken   string `yaml:"access_token"`
 }
 
 // GetConf gets configuration instance

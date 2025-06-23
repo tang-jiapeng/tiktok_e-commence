@@ -102,7 +102,7 @@ type ProductSearchMatchQuery struct {
 }
 
 type ProductBulkUpdate struct {
-	//Update
+	Update ProductBulkBody `json:"update,omitempty"`
 }
 
 type ProductBulkBody struct {

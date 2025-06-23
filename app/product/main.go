@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"net"
 	"tiktok_e-commerce/product/infra/kafka"
+	"tiktok_e-commerce/product/infra/xxl-job/task"
 	"time"
 
 	"tiktok_e-commerce/common/infra/nacos"
@@ -17,6 +19,7 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/xxl-job/xxl-job-executor-go"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -33,6 +36,9 @@ func main() {
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
+
+	//将任务注册到xxl-job中
+	go xxlJobInit()
 
 	err = svr.Run()
 	if err != nil {
@@ -74,4 +80,64 @@ func kitexInit() (opts []server.Option) {
 		asyncWriter.Sync()
 	})
 	return
+}
+
+func xxlJobInit() {
+	xxljobAddr := conf.GetConf().XxlJob.XxlJobAddress
+	exec := xxl.NewExecutor(
+		xxl.ServerAddr(xxljobAddr+"/xxl-job-admin"),
+		xxl.AccessToken(conf.GetConf().XxlJob.AccessToken), //请求令牌(默认为空)
+		xxl.ExecutorIp(conf.GetConf().XxlJob.ExecutorIp),
+		xxl.ExecutorPort("7777"),
+		xxl.RegistryKey("tiktok-e-commerce-product-service"), //执行器名称
+		xxl.SetLogger(&logger{}),
+	)
+	exec.Init()
+	exec.Use(customMiddleware)
+	//设置日志查看handler
+	exec.LogHandler(customLogHandle)
+	//注册任务handler
+	exec.RegTask("task.RefreshElastic", task.RefreshElastic)
+
+	klog.Fatal(exec.Run())
+}
+
+// 自定义日志处理器
+func customLogHandle(req *xxl.LogReq) *xxl.LogRes {
+	return &xxl.LogRes{
+		Code: xxl.SuccessCode,
+		Msg:  "",
+		Content: xxl.LogResContent{
+			FromLineNum: req.FromLineNum,
+			ToLineNum:   2,
+			LogContent:  "自定义日志handler",
+			IsEnd:       true,
+		},
+	}
+}
+
+// xxl.Logger接口实现
+type logger struct{}
+
+func (l *logger) Info(format string, a ...interface{}) {
+	klog.CtxInfof(context.Background(), format, a...)
+}
+
+func (l *logger) Error(format string, a ...interface{}) {
+	klog.CtxErrorf(context.Background(), format, a...)
+}
+func (l *logger) Debug(format string, a ...interface{}) {
+	klog.CtxDebugf(context.Background(), format, a...)
+}
+func (l *logger) Warn(format string, a ...interface{}) {
+	klog.CtxWarnf(context.Background(), format, a...)
+}
+
+func customMiddleware(tf xxl.TaskFunc) xxl.TaskFunc {
+	return func(cxt context.Context, param *xxl.RunReq) string {
+		klog.CtxInfof(context.Background(), "xxl-job 定时任务启动")
+		res := tf(cxt, param)
+		klog.CtxInfof(context.Background(), "xxl-job 定时任务结束")
+		return res
+	}
 }
