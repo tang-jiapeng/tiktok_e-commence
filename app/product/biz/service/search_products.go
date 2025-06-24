@@ -2,21 +2,22 @@ package service
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/json"
 	"io"
 	"strconv"
 	"strings"
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/dal/redis"
 	"tiktok_e-commerce/product/biz/model"
+	"tiktok_e-commerce/product/infra/elastic"
 	"time"
 
 	"tiktok_e-commerce/common/constant"
 	"tiktok_e-commerce/product/biz/vo"
-	"tiktok_e-commerce/product/infra/elastic"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 
 	"github.com/bytedance/sonic"
-	"github.com/cloudwego/hertz/pkg/common/json"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 )
@@ -41,33 +42,54 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 			"id",
 		},
 	}
-	jsonData, _ := json.Marshal(queryBody)
-	//发往elastic
-	search, _ := esapi.SearchRequest{
-		Index: []string{"product"},
-		Body:  strings.NewReader(string(jsonData)),
-	}.Do(context.Background(), elastic.ElasticClient)
-	// 解析数据
-	searchData, _ := io.ReadAll(search.Body)
-	elasticSearchVo := vo.ProductSearchAllDataVo{}
-	err = json.Unmarshal(searchData, &elasticSearchVo)
-	if err != nil {
-		resp = &product.SearchProductsResp{
-			StatusCode: 2013,
-			StatusMsg:  constant.GetMsg(2013),
-		}
-		return
-	}
-	productHitsList := elasticSearchVo.Hits.Hits
+	dslBytes, _ := sonic.Marshal(queryBody)
+	//将dsl计算hashcode
+	hasher := md5.New()
+	hasher.Write(dslBytes)
+	md5Bytes := hasher.Sum(nil)
+	//从redis查找该hashcode对应的缓存数据
+	dslKey := "product:dslBytes:" + string(md5Bytes)
+	dslCache, err := redis.RedisClient.Get(context.Background(), dslKey).Result()
+	//搜索返回的id
 	var searchIds []int64
-	for i := range productHitsList {
-		sourceData := productHitsList[i].Source
-		searchIds = append(searchIds, sourceData.ID)
+	if dslCache != "" && dslCache != "null" {
+		err = sonic.UnmarshalString(dslCache, &searchIds)
+		if err != nil {
+			return
+		}
+	} else {
+		//如果缓存数据存在，则直接返回数据
+		//发往elastic
+		search, _ := esapi.SearchRequest{
+			Index: []string{"product"},
+			Body:  strings.NewReader(string(dslBytes)),
+		}.Do(context.Background(), elastic.ElasticClient)
+		// 解析数据
+		searchData, _ := io.ReadAll(search.Body)
+		elasticSearchVo := vo.ProductSearchAllDataVo{}
+		err = json.Unmarshal(searchData, &elasticSearchVo)
+		if err != nil {
+			resp = &product.SearchProductsResp{
+				StatusCode: 2013,
+				StatusMsg:  constant.GetMsg(2013),
+			}
+			return
+		}
+		productHitsList := elasticSearchVo.Hits.Hits
+		if len(productHitsList) > 0 {
+			for i := range productHitsList {
+				sourceData := productHitsList[i].Source
+				searchIds = append(searchIds, sourceData.ID)
+			}
+			//将es返回的数据缓存到redis
+			dslCacheToRedis, _ := sonic.Marshal(searchIds)
+			_, _ = redis.RedisClient.Set(context.Background(), dslKey, dslCacheToRedis, 5*time.Minute).Result()
+		}
 	}
-	var products []*product.Product
+	var products []*product.Product = make([]*product.Product, 0)
 	//根据id从缓存或者数据库中获取数据
 	//keys是redis的key
-	var keys []string
+	var keys []string = make([]string, 0, len(searchIds))
 	//根据返回的数据确认是否有缺失数据，有的话把当前的id存进去
 	var missingIds []int64
 	//将id转换为redis的key
@@ -75,25 +97,24 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 		keys = append(keys, "product:"+strconv.FormatInt(searchIds[i], 10))
 	}
 	//先判断redis是否存在数据，如果存在，则直接返回数据
-	values, err := redis.RedisClient.MGet(context.Background(), keys...).Result()
-	if err != nil {
-		return
-	}
-	for i, value := range values {
-		// 提取ID部分
-		idStr := keys[i][len("product:"):]
-		if value == nil {
-			if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
-				missingIds = append(missingIds, id)
+	if len(keys) > 0 {
+		values, err := redis.RedisClient.MGet(context.Background(), keys...).Result()
+		for i, value := range values {
+			// 提取ID部分
+			idStr := keys[i][len("product:"):]
+			if value == nil {
+				if id, err := strconv.ParseInt(idStr, 10, 64); err != nil {
+					missingIds = append(missingIds, id)
+				}
+			} else {
+				//解析数据
+				productData := product.Product{}
+				err = sonic.UnmarshalString(value.(string), &productData)
+				if err != nil {
+					return nil, err
+				}
+				products = append(products, &productData)
 			}
-		} else {
-			//解析数据
-			productData := product.Product{}
-			err = sonic.UnmarshalString(value.(string), &productData)
-			if err != nil {
-				return nil, err
-			}
-			products = append(products, &productData)
 		}
 	}
 	//如果不存在，则从数据库中获取数据，并存入redis
