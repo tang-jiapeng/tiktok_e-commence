@@ -18,7 +18,6 @@ import (
 )
 
 func RefreshElastic(ctx context.Context, param *xxl.RunReq) string {
-	fmt.Println("refresh elastic")
 	klog.CtxInfof(ctx, "refresh elastic start")
 	err := refresh(ctx)
 	if err != nil {
@@ -33,7 +32,6 @@ func refresh(ctx context.Context) (err error) {
 	if err != nil {
 		return
 	}
-	fmt.Printf("%v", allProduct)
 	productMap := map[int64]model.Product{}
 	for i := range allProduct {
 		productMap[allProduct[i].ID] = allProduct[i]

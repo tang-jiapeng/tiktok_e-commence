@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"net"
+	"tiktok_e-commerce/product/biz/task"
 	"tiktok_e-commerce/product/infra/kafka"
-	"tiktok_e-commerce/product/infra/xxl-job/task"
 	"time"
 
 	"tiktok_e-commerce/common/infra/nacos"
@@ -39,6 +39,9 @@ func main() {
 
 	//将任务注册到xxl-job中
 	go xxlJobInit()
+
+	go task.ProduceIndicesInit()
+	go task.Consumer()
 
 	err = svr.Run()
 	if err != nil {

@@ -26,6 +26,5 @@ func InitClient() {
 			klog.Error(err)
 			return
 		}
-		ProduceIndicesInit()
 	})
 }

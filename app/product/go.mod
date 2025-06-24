@@ -5,7 +5,7 @@ go 1.23.1
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
-	github.com/IBM/sarama v1.45.2
+	github.com/IBM/sarama v1.45.0
 	github.com/bytedance/sonic v1.13.2
 	github.com/cloudwego/hertz v0.10.0
 	github.com/cloudwego/kitex v0.13.1

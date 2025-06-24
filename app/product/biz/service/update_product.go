@@ -5,7 +5,7 @@ import (
 	"tiktok_e-commerce/common/constant"
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
-	kf "tiktok_e-commerce/product/infra/kafka"
+	kf "tiktok_e-commerce/product/biz/task"
 	product "tiktok_e-commerce/rpc_gen/kitex_gen/product"
 
 	"github.com/cloudwego/kitex/pkg/klog"
