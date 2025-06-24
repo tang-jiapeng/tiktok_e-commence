@@ -7,7 +7,6 @@ replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 require (
 	github.com/IBM/sarama v1.45.0
 	github.com/bytedance/sonic v1.13.2
-	github.com/cloudwego/hertz v0.10.0
 	github.com/cloudwego/kitex v0.13.1
 	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/joho/godotenv v1.5.1
@@ -78,6 +77,7 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sirupsen/logrus v1.9.2 // indirect
+	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

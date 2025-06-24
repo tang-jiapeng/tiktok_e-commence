@@ -3,11 +3,12 @@ package product
 import (
 	"context"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"tiktok_e-commerce/api/biz/service"
 	"tiktok_e-commerce/api/biz/utils"
 	product "tiktok_e-commerce/api/hertz_gen/api/product"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Search .
@@ -283,6 +284,26 @@ func ProductSelectList(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := service.NewProductSelectListService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
+
+// ProductLockQuantity .
+// @router /product/lockQuantity [POST]
+func ProductLockQuantity(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductLockQuantityRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewProductLockQuantityService(ctx, c).Run(&req)
 
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)

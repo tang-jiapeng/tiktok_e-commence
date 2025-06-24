@@ -18,10 +18,16 @@ type Product struct {
 	LockStock   int64   `json:"lock_stock"`
 	CategoryId  int64   `json:"category_id"`
 	BrandId     int64   `json:"brand_id"`
+	RealStock   int64   `gorm:"-" json:"quantity"`
 }
 
-func (u Product) TableName() string {
+func (p Product) TableName() string {
 	return "tb_product"
+}
+
+func (p *Product) AfterFind(tx *gorm.DB) (err error) {
+	p.RealStock = p.Stock - p.LockStock
+	return nil
 }
 
 func SelectProduct(db *gorm.DB, ctx context.Context, id int64) (product Product, err error) {
@@ -60,5 +66,23 @@ func SelectProductAll(db *gorm.DB, ctx context.Context) (product []Product, err 
 	product = []Product{}
 	result := db.WithContext(ctx).Find(&product)
 	err = result.Error
+	return
+}
+
+func UpdateLockStock(db *gorm.DB, ctx context.Context, productQuantityMap map[int64]int64) (err error) {
+	err = db.Transaction(func(tx *gorm.DB) error {
+		for id, quantity := range productQuantityMap {
+			result := tx.WithContext(ctx).
+				Model(&Product{}).
+				Where("id =?", id).
+				Where("stock >= lock_stock + ?", quantity).
+				Update("lock_stock", gorm.Expr("lock_stock + ?", quantity))
+			e := result.Error
+			if e != nil {
+				return e
+			}
+		}
+		return nil
+	})
 	return
 }
