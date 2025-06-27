@@ -135,8 +135,8 @@ CREATE TABLE `xxl_job_lock`
 ## —————————————————————— init data ——————————————————
 
 INSERT INTO `xxl_job_group`(`id`, `app_name`, `title`, `address_type`, `address_list`, `update_time`)
-    VALUES (1, 'xxl-job-executor-sample', '通用执行器Sample', 0, NULL, now()),
-           (2, 'xxl-job-executor-sample-ai', 'AI执行器Sample', 0, NULL, now());
+    VALUES (1, 'xxl-executor-sample', '通用执行器Sample', 0, NULL, now()),
+           (2, 'xxl-executor-sample-ai', 'AI执行器Sample', 0, NULL, now());
 
 INSERT INTO `xxl_job_info`(`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`,
                            `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`,
@@ -157,7 +157,7 @@ VALUES (1, 1, '示例任务01', now(), now(), 'XXL', '', 'CRON', '0 0 0 * * ? *'
     "inputs":{
         "input":"查询班级各学科前三名"
     },
-    "user": "xxl-job",
+    "user": "xxl",
     "baseUrl": "http://localhost/v1",
     "apiKey": "app-OUVgNUOQRIMokfmuJvBJoUTN"
 }', 'SERIAL_EXECUTION', 0, 0, 'BEAN', '', 'GLUE代码初始化',

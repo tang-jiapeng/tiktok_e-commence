@@ -34,39 +34,39 @@ func SelectProduct(db *gorm.DB, ctx context.Context, id int64) (product Product,
 	product = Product{}
 	result := db.WithContext(ctx).Where("id = ?", id).First(&product)
 	err = result.Error
-	return
+	return product, err
 }
 
 func UpdateProduct(db *gorm.DB, ctx context.Context, product *Product) (err error) {
 	result := db.WithContext(ctx).Updates(&product)
 	err = result.Error
-	return
+	return err
 }
 
 func DeleteProduct(db *gorm.DB, ctx context.Context, id int64) (err error) {
 	result := db.WithContext(ctx).Delete(&Product{Base: Base{ID: id}})
 	err = result.Error
-	return
+	return err
 }
 
 func CreateProduct(db *gorm.DB, ctx context.Context, product *Product) (err error) {
 	result := db.WithContext(ctx).Create(product)
 	err = result.Error
-	return
+	return err
 }
 
 func SelectProductList(db *gorm.DB, ctx context.Context, ids []int64) (product []Product, err error) {
 	product = []Product{}
 	result := db.WithContext(ctx).Where("id IN ?", ids).Find(&product)
 	err = result.Error
-	return
+	return product, err
 }
 
-func SelectProductAll(db *gorm.DB, ctx context.Context) (product []Product, err error) {
+func SelectProductAll(db *gorm.DB, ctx context.Context, index, total int64) (product []Product, err error) {
 	product = []Product{}
-	result := db.WithContext(ctx).Find(&product)
+	result := db.WithContext(ctx).Model(&Product{}).Where("id%? = ?", total, index).Find(&product)
 	err = result.Error
-	return
+	return product, err
 }
 
 func UpdateLockStock(db *gorm.DB, ctx context.Context, productQuantityMap map[int64]int64) (err error) {
@@ -84,5 +84,5 @@ func UpdateLockStock(db *gorm.DB, ctx context.Context, productQuantityMap map[in
 		}
 		return nil
 	})
-	return
+	return err
 }

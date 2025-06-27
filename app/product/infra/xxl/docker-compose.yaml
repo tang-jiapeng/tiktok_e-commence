@@ -2,7 +2,7 @@ version: '3'
 services:
   xxl-job-admin:
     image: xuxueli/xxl-job-admin:3.1.0
-    container_name: xxl-job-admin
+    container_name: xxl-admin
     ports:
       - "9999:8080"
     environment:
