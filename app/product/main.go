@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"tiktok_e-commerce/product/biz/task"
+	"tiktok_e-commerce/product/infra/elastic"
 	"tiktok_e-commerce/product/infra/kafka"
 	"time"
 
@@ -11,7 +12,6 @@ import (
 	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/product/biz/dal"
 	"tiktok_e-commerce/product/conf"
-	"tiktok_e-commerce/product/infra/elastic"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -32,16 +32,13 @@ func main() {
 	dal.Init()
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 	elastic.InitClient()
-	kafka.InitClient()
+	kafka.Init()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
 
 	//将任务注册到xxl-job中
 	go xxlJobInit()
-
-	go task.ProduceIndicesInit()
-	go task.Consumer()
 
 	err = svr.Run()
 	if err != nil {

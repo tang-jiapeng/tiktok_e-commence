@@ -10,7 +10,7 @@ import (
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/dal/redis"
 	"tiktok_e-commerce/product/biz/model"
-	"tiktok_e-commerce/product/infra/elastic"
+	"tiktok_e-commerce/product/infra/elastic/client"
 	"time"
 
 	"tiktok_e-commerce/common/constant"
@@ -63,7 +63,7 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 		search, _ := esapi.SearchRequest{
 			Index: []string{"product"},
 			Body:  strings.NewReader(string(dslBytes)),
-		}.Do(context.Background(), elastic.ElasticClient)
+		}.Do(context.Background(), client.ElasticClient)
 		// 解析数据
 		searchData, _ := io.ReadAll(search.Body)
 		elasticSearchVo := vo.ProductSearchAllDataVo{}

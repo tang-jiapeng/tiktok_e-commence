@@ -1,4 +1,4 @@
-package task
+package check
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
 	"tiktok_e-commerce/product/biz/vo"
-	"tiktok_e-commerce/product/infra/elastic"
+	"tiktok_e-commerce/product/infra/elastic/client"
 
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -18,7 +18,7 @@ func ProduceIndicesInit() {
 	// 构建请求
 	productIndicesExist, err := esapi.IndicesExistsRequest{
 		Index: []string{"product"},
-	}.Do(nil, elastic.ElasticClient)
+	}.Do(nil, client.ElasticClient)
 	if err != nil {
 		klog.Error(err)
 		return
@@ -34,7 +34,7 @@ func ProduceIndicesInit() {
 		create, err := esapi.IndicesCreateRequest{
 			Index: "product",
 			Body:  strings.NewReader(s),
-		}.Do(context.Background(), elastic.ElasticClient)
+		}.Do(context.Background(), client.ElasticClient)
 		if err != nil {
 			klog.Info(err)
 		}
@@ -66,7 +66,7 @@ func ProduceIndicesInit() {
 				Index:   "product",
 				Body:    strings.NewReader(string(sonicData)),
 				Refresh: "true",
-			}.Do(context.Background(), elastic.ElasticClient)
+			}.Do(context.Background(), client.ElasticClient)
 		}
 	}
 }

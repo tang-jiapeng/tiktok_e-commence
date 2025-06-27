@@ -1,4 +1,4 @@
-package kafka
+package producer
 
 import (
 	"strings"
@@ -10,13 +10,10 @@ import (
 
 var (
 	Producer sarama.SyncProducer
-	Topic    string
 	err      error
 )
 
-func InitClient() {
-	// 配置Topic
-	Topic = conf.GetConf().Kafka.BizKafka.ProductTopicId
+func InitProducerClient() {
 	// 配置生产者
 	err = InitProducer()
 	if err != nil {

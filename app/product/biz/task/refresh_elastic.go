@@ -9,7 +9,7 @@ import (
 	"tiktok_e-commerce/product/biz/dal/mysql"
 	"tiktok_e-commerce/product/biz/model"
 	"tiktok_e-commerce/product/biz/vo"
-	"tiktok_e-commerce/product/infra/elastic"
+	"tiktok_e-commerce/product/infra/elastic/client"
 
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -52,7 +52,7 @@ func refresh(ctx context.Context) (err error) {
 	searchIdResponse, err := esapi.SearchRequest{
 		Index: []string{"product"},
 		Body:  strings.NewReader(string(searchIdBytes)),
-	}.Do(ctx, elastic.ElasticClient)
+	}.Do(ctx, client.ElasticClient)
 	// 解析数据
 	searchIdResponseBytes, _ := io.ReadAll(searchIdResponse.Body)
 	elasticSearchVo := vo.ProductSearchAllDataVo{}
@@ -91,7 +91,7 @@ func refresh(ctx context.Context) (err error) {
 	bulkResponse, err := esapi.BulkRequest{
 		Index: "product",
 		Body:  bytes.NewBuffer(bulkBody),
-	}.Do(ctx, elastic.ElasticClient)
+	}.Do(ctx, client.ElasticClient)
 	if err != nil {
 		return err
 	}
