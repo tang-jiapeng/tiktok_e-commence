@@ -21,7 +21,7 @@ func NewSelectProductListService(ctx context.Context) *SelectProductListService 
 func (s *SelectProductListService) Run(req *product.SelectProductListReq) (resp *product.SelectProductListResp, err error) {
 	products, err := model.SelectProductList(mysql.DB, s.ctx, req.Ids)
 	if err != nil {
-		klog.Error("mysql error:%v", err)
+		klog.CtxErrorf(s.ctx, "查询商品列表失败, error:%v", err)
 		resp = &product.SelectProductListResp{
 			StatusCode: 2003,
 			StatusMsg:  constant.GetMsg(2003),
@@ -32,11 +32,13 @@ func (s *SelectProductListService) Run(req *product.SelectProductListReq) (resp 
 	var productList []*product.Product
 	for i := range products {
 		productList = append(productList, &product.Product{
-			Id:          products[i].ID,
-			Name:        products[i].Name,
-			Price:       products[i].Price,
-			Description: products[i].Description,
-			Picture:     products[i].Picture,
+			Id:           products[i].ProductId,
+			Name:         products[i].ProductName,
+			Description:  products[i].ProductDescription,
+			Picture:      products[i].ProductPicture,
+			Price:        products[i].ProductPrice,
+			CategoryName: products[i].CategoryName,
+			CategoryId:   products[i].CategoryID,
 		})
 	}
 	resp = &product.SelectProductListResp{

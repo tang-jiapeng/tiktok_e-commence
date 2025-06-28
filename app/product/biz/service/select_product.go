@@ -21,7 +21,7 @@ func NewSelectProductService(ctx context.Context) *SelectProductService {
 func (s *SelectProductService) Run(req *product.SelectProductReq) (resp *product.SelectProductResp, err error) {
 	pro, err := model.SelectProduct(mysql.DB, s.ctx, req.Id)
 	if err != nil {
-		klog.Error("mysql select product error:%v", err)
+		klog.CtxErrorf(s.ctx, "查询商品失败, error:%v", err)
 		resp = &product.SelectProductResp{
 			StatusCode: 2003,
 			StatusMsg:  constant.GetMsg(2003),
@@ -43,6 +43,7 @@ func (s *SelectProductService) Run(req *product.SelectProductReq) (resp *product
 			PublishStatus: pro.PublicState,
 			CategoryId:    pro.CategoryId,
 			BrandId:       pro.BrandId,
+			CategoryName:  pro.Category.Name,
 		},
 	}, nil
 }

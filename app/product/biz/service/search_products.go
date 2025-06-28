@@ -126,18 +126,17 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 			missingProducts := make([]*product.Product, len(list))
 			for i := range list {
 				p := product.Product{
-					Id:          list[i].ID,
-					Name:        list[i].Name,
-					Description: list[i].Description,
-					Picture:     list[i].Picture,
-					Price:       list[i].Price,
-					Stock:       list[i].Stock,
-					Sale:        list[i].Sale,
-					CategoryId:  list[i].CategoryId,
-					BrandId:     list[i].BrandId,
+					Id:          list[i].ProductId,
+					Name:        list[i].ProductName,
+					Description: list[i].ProductDescription,
+					Picture:     list[i].ProductPicture,
+					Price:       list[i].ProductPrice,
+					Stock:       list[i].ProductStock,
+					Sale:        list[i].ProductSale,
+					CategoryId:  list[i].CategoryID,
 				}
 				missingProducts[i] = &p
-				s2 := "product:" + strconv.FormatInt(list[i].ID, 10)
+				s2 := "product:" + strconv.FormatInt(list[i].ProductId, 10)
 				marshalString, err := sonic.MarshalString(p)
 				if err != nil {
 					return nil, err
