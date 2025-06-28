@@ -15,10 +15,11 @@ import (
 )
 
 func ProduceIndicesInit() {
+	ctx := context.Background()
 	// 构建请求
 	productIndicesExist, err := esapi.IndicesExistsRequest{
 		Index: []string{"product"},
-	}.Do(nil, client.ElasticClient)
+	}.Do(ctx, client.ElasticClient)
 	if err != nil {
 		klog.Error(err)
 		return
@@ -34,7 +35,7 @@ func ProduceIndicesInit() {
 		create, err := esapi.IndicesCreateRequest{
 			Index: "product",
 			Body:  strings.NewReader(s),
-		}.Do(context.Background(), client.ElasticClient)
+		}.Do(ctx, client.ElasticClient)
 		if err != nil {
 			klog.Info(err)
 		}
@@ -46,27 +47,32 @@ func ProduceIndicesInit() {
 		}
 		// 将数据导入到product索引库中
 		// 从数据库中获取数据
-		var products []model.Product
-		result := mysql.DB.Table("tb_product").Select("*").Find(&products)
-		if result.Error != nil {
-			klog.Error(result.Error)
+
+		products, err := model.SelectProductAllWithoutCondition(mysql.DB, ctx)
+		if err != nil {
+			klog.Errorf("查询数据库失败,err:%v", err)
 			return
 		}
 		// 遍历数据，将数据转换为sonic格式
 		for i := range products {
 			pro := products[i]
 			dataVo := vo.ProductSearchDataVo{
-				Name:        pro.Name,
-				Description: pro.Description,
-				ID:          pro.ID,
+				Name:         pro.ProductName,
+				Description:  pro.ProductDescription,
+				ID:           pro.ProductId,
+				CategoryName: pro.CategoryName,
 			}
 			sonicData, _ := sonic.Marshal(dataVo)
 			// 调用esapi.BulkRequest将数据导入到product索引库中
-			_, _ = esapi.IndexRequest{
+			_, err = esapi.IndexRequest{
 				Index:   "product",
 				Body:    strings.NewReader(string(sonicData)),
 				Refresh: "true",
-			}.Do(context.Background(), client.ElasticClient)
+			}.Do(ctx, client.ElasticClient)
+			if err != nil {
+				klog.Errorf("导入数据到索引库product失败,err:%v", err)
+				return
+			}
 		}
 	}
 }

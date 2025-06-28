@@ -33,10 +33,26 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
 	queryBody := vo.ProductSearchQueryBody{
 		Query: &vo.ProductSearchQuery{
-			MultiMatch: &vo.ProductSearchMultiMatchQuery{
-				Query:  req.Query,
-				Fields: []string{"name", "description"},
+			Bool: &vo.ProductSearchBoolQuery{
+				Should: &[]*vo.ProductSearchQuery{
+					{
+						MultiMatch: &vo.ProductSearchMultiMatchQuery{
+							Query:  req.Query,
+							Fields: []string{"name", "description", "category_name"},
+						},
+					},
+					//{
+					//	MultiMatch: &vo.ProductSearchMultiMatchQuery{
+					//		Query:  req.CategoryName,
+					//		Fields: []string{"category_name"},
+					//	},
+					//},
+				},
 			},
+			//MultiMatch: &vo.ProductSearchMultiMatchQuery{
+			//	Query:  req.Query,
+			//	Fields: []string{"name", "description"},
+			//},
 		},
 		Source: &vo.ProductSearchSource{
 			"id",
@@ -49,12 +65,13 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 	md5Bytes := hasher.Sum(nil)
 	//从redis查找该hashcode对应的缓存数据
 	dslKey := "product:dslBytes:" + string(md5Bytes)
-	dslCache, err := redis.RedisClient.Get(context.Background(), dslKey).Result()
+	dslCache, err := redis.RedisClient.Get(s.ctx, dslKey).Result()
 	//搜索返回的id
 	var searchIds []int64
 	if dslCache != "" && dslCache != "null" {
 		err = sonic.UnmarshalString(dslCache, &searchIds)
 		if err != nil {
+			klog.CtxErrorf(s.ctx, "dsl缓存反序列化失败, err: %v", err)
 			return
 		}
 	} else {
@@ -63,7 +80,7 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 		search, _ := esapi.SearchRequest{
 			Index: []string{"product"},
 			Body:  strings.NewReader(string(dslBytes)),
-		}.Do(context.Background(), client.ElasticClient)
+		}.Do(s.ctx, client.ElasticClient)
 		// 解析数据
 		searchData, _ := io.ReadAll(search.Body)
 		elasticSearchVo := vo.ProductSearchAllDataVo{}

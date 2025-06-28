@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	"errors"
+
+	"github.com/pkg/errors"
 
 	product "tiktok_e-commerce/api/hertz_gen/api/product"
 	"tiktok_e-commerce/api/infra/rpc"
@@ -30,15 +31,16 @@ func (h *SearchService) Run(req *product.ProductRequest) (resp *product.ProductR
 	})
 
 	if err != nil {
-		hlog.Error("product search error: %v", err)
-		return nil, errors.New("搜索失败，请稍后再试")
+		hlog.CtxErrorf(h.Context, "商品搜索失败: %v", errors.WithStack(err))
+		return nil, err
 	}
-	productList := []*product.Product{}
+	var productList []*product.Product
 	for i := range res.Results {
 		source := res.Results[i]
 		productList = append(productList, &product.Product{
-			Name:        source.Name,
-			Description: source.Description,
+			Name:         source.Name,
+			Description:  source.Description,
+			CategoryName: source.CategoryName,
 		})
 	}
 	resp = &product.ProductResponse{
