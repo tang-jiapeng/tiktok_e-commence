@@ -3,10 +3,10 @@ package user
 import (
 	"context"
 	user "tiktok_e-commerce/rpc_gen/kitex_gen/user"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
-	
 )
 
 type RPCClient interface {

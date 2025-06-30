@@ -118,7 +118,7 @@ func InitUserCacheMessageConsumer() {
 	consumerConfig.Consumer.Offsets.Retry.Max = 3
 
 	consumerGroup, err := sarama.NewConsumerGroup(
-		conf.GetConf().Kafka.BizKafka.BootstrapServers, "cache-user-info-dev", consumerConfig)
+		conf.GetConf().Kafka.BizKafka.BootstrapServers, "key_cache-user-info-dev", consumerConfig)
 	if err != nil {
 		panic(err)
 	}
