@@ -3,10 +3,15 @@ module tiktok_e-commerce/common
 go 1.23.1
 
 require (
+	github.com/allegro/bigcache/v3 v3.1.0
+	github.com/bytedance/sonic v1.13.2
+	github.com/cloudwego/hertz v0.10.1
 	github.com/cloudwego/kitex v0.13.1
 	github.com/kitex-contrib/registry-nacos v0.1.3
 	github.com/nacos-group/nacos-sdk-go v1.1.5
 	github.com/prometheus/client_golang v1.22.0
+	github.com/redis/go-redis/v9 v9.11.0
+	github.com/spaolacci/murmur3 v1.1.0
 )
 
 require (
@@ -14,7 +19,6 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/bytedance/gopkg v0.1.2 // indirect
-	github.com/bytedance/sonic v1.13.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
@@ -29,6 +33,7 @@ require (
 	github.com/cloudwego/runtimex v0.1.1 // indirect
 	github.com/cloudwego/thriftgo v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/go-errors/errors v1.0.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
