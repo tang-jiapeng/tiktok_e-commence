@@ -3,8 +3,9 @@ package redis
 import (
 	"context"
 
-	"github.com/redis/go-redis/v9"
 	"tiktok_e-commerce/user/conf"
+
+	"github.com/redis/go-redis/v9"
 )
 
 var (

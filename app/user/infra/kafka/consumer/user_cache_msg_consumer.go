@@ -6,6 +6,7 @@ import (
 	"tiktok_e-commerce/user/biz/dal/mysql"
 	"tiktok_e-commerce/user/biz/dal/redis"
 	"tiktok_e-commerce/user/biz/model"
+	"tiktok_e-commerce/user/biz/service"
 	"tiktok_e-commerce/user/conf"
 	redisUtils "tiktok_e-commerce/user/utils/redis"
 	"time"
@@ -28,62 +29,27 @@ func (m msgConsumerGroup) Cleanup(_ sarama.ConsumerGroupSession) error {
 }
 
 func (m msgConsumerGroup) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	ctx := session.Context()
 	for msg := range claim.Messages() {
 		klog.Infof("收到消息，topic:%q partition:%d offset:%d  value:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
 		userCacheMsg := UserCacheMessage{}
 		err := sonic.Unmarshal(msg.Value, &userCacheMsg)
 		if err != nil {
 			klog.Errorf("反序列化消息失败，err：%v", err)
-			return err
+			continue
 		}
 		err = selectAndCacheUserInfo(session.Context(), userCacheMsg.UserId)
 		if err != nil {
 			klog.Errorf("缓存用户信息失败，err：%v", err)
-			return err
+			continue
 		}
-		err = selectAndCacheUserAddresses(session.Context(), userCacheMsg.UserId)
+		_, err = service.NewGetReceiveAddressService(ctx).SelectAndCacheUserAddresses(session.Context(), userCacheMsg.UserId)
 		if err != nil {
 			klog.Errorf("缓存用户地址失败，err：%v", err)
-			return err
+			continue
 		}
 		session.MarkMessage(msg, "")
 		session.Commit()
-	}
-	return nil
-}
-
-func selectAndCacheUserAddresses(ctx context.Context, userId int32) error {
-	addresses, err := model.GetAdressList(mysql.DB, ctx, userId)
-	if err != nil {
-		return err
-	}
-	if len(addresses) == 0 {
-		return nil
-	}
-	luaScript := `
-		if redis.call('EXISTS', KEYS[1]) == 0 then
-			return redis.call('RPUSH', KEYS[1], unpack(ARGV))
-		else
-			return 0
-		end
-	`
-	key := redisUtils.GetUserAddressesKey(userId)
-	addressStrs := make([]string, len(addresses))
-	for i, address := range addresses {
-		addressStr, err := sonic.Marshal(address)
-		if err != nil {
-			return err
-		}
-		addressStrs[i] = string(addressStr)
-	}
-	err = redis.RedisClient.Eval(ctx, luaScript, []string{key}, addressStrs).Err()
-	if err != nil {
-		return err
-	}
-	// 设置过期时间和access token的过期时间一致
-	err = redis.RedisClient.Expire(ctx, key, time.Hour*2).Err()
-	if err != nil {
-		return err
 	}
 	return nil
 }

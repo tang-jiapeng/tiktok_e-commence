@@ -22,8 +22,9 @@ func NewAddReceiveAddressService(ctx context.Context) *AddReceiveAddressService 
 
 // Run create note info
 func (s *AddReceiveAddressService) Run(req *user.AddReceiveAddressReq) (resp *user.AddReceiveAddressResp, err error) {
+	addr := req.ReceiveAddress
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
-		if req.DefaltStatus == model.AddressDefaultStatusYes {
+		if addr.DefaultStatus == model.AddressDefaultStatusYes {
 			existingAddr, err := model.ExistDefaultAddress(tx, s.ctx, req.UserId)
 			if err != nil {
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -41,13 +42,13 @@ func (s *AddReceiveAddressService) Run(req *user.AddReceiveAddressReq) (resp *us
 		}
 		address := model.Address{
 			UserId:        req.UserId,
-			Name:          req.Name,
-			PhoneNumber:   req.PhoneNumber,
-			DefaultStatus: int8(req.DefaltStatus),
-			Province:      req.Province,
-			City:          req.City,
-			Region:        req.Region,
-			DetailAddress: req.DetailAddress,
+			Name:          addr.Name,
+			PhoneNumber:   addr.PhoneNumber,
+			DefaultStatus: int8(addr.DefaultStatus),
+			Province:      addr.Province,
+			City:          addr.City,
+			Region:        addr.Region,
+			DetailAddress: addr.DetailAddress,
 		}
 		err = model.CreateAddress(mysql.DB, s.ctx, &address)
 		if err != nil {

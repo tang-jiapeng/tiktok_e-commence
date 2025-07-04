@@ -11,6 +11,6 @@ func GetUserKey(userId int32) string {
 	return fmt.Sprintf(UserInfoCacheKey, userId)
 }
 
-func GetUserAddressesKey(userId int32) string {
+func GetUserAddressKey(userId int32) string {
 	return fmt.Sprintf(UserAddressesCacheKey, userId)
 }
