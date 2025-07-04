@@ -2,9 +2,9 @@ package order
 
 import (
 	"context"
-	order "tiktok_e-commerce/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	order "tiktok_e-commerce/rpc_gen/kitex_gen/order"
 )
 
 func PlaceOrder(ctx context.Context, req *order.PlaceOrderReq, callOptions ...callopt.Option) (resp *order.PlaceOrderResp, err error) {
@@ -29,6 +29,15 @@ func MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidReq, callOptions
 	resp, err = defaultClient.MarkOrderPaid(ctx, req, callOptions...)
 	if err != nil {
 		klog.CtxErrorf(ctx, "MarkOrderPaid call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetOrder(ctx context.Context, req *order.GetOrderReq, callOptions ...callopt.Option) (resp *order.GetOrderResp, err error) {
+	resp, err = defaultClient.GetOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "GetOrder call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

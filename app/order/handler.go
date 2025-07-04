@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	order "tiktok_e-commerce/rpc_gen/kitex_gen/order"
 	"tiktok_e-commerce/order/biz/service"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/order"
 )
 
 // OrderServiceImpl implements the last service interface defined in the IDL.
@@ -26,6 +26,13 @@ func (s *OrderServiceImpl) ListOrder(ctx context.Context, req *order.ListOrderRe
 // MarkOrderPaid implements the OrderServiceImpl interface.
 func (s *OrderServiceImpl) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidReq) (resp *order.MarkOrderPaidResp, err error) {
 	resp, err = service.NewMarkOrderPaidService(ctx).Run(req)
+
+	return resp, err
+}
+
+// GetOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) GetOrder(ctx context.Context, req *order.GetOrderReq) (resp *order.GetOrderResp, err error) {
+	resp, err = service.NewGetOrderService(ctx).Run(req)
 
 	return resp, err
 }
