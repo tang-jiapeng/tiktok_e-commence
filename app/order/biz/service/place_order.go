@@ -4,8 +4,12 @@ import (
 	"context"
 	"tiktok_e-commerce/order/biz/dal/mysql"
 	"tiktok_e-commerce/order/biz/model"
+	"tiktok_e-commerce/order/infra/kafka/constant"
+	"tiktok_e-commerce/order/infra/kafka/producer"
 	"tiktok_e-commerce/order/utils"
 	order "tiktok_e-commerce/rpc_gen/kitex_gen/order"
+
+	commonconstant "tiktok_e-commerce/common/constant"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/pkg/errors"
@@ -22,8 +26,8 @@ func NewPlaceOrderService(ctx context.Context) *PlaceOrderService {
 // Run create note info
 func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrderResp, err error) {
 	ctx := s.ctx
+	orderId := utils.GetSnowFlakeID()
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
-		orderId := utils.GetSnowFlakeID()
 		newOrder := &model.Order{
 			OrderID:       orderId,
 			UserID:        req.UserId,
@@ -63,6 +67,14 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 	}
 	// Todo 批量锁定库存
 
-	// Todo 延时取消订单
-	return
+	// 延时取消订单
+	producer.SendDelayOrder(orderId, constant.DelayTopic1mLevel)
+
+	return &order.PlaceOrderResp{
+		StatusCode: 0,
+		StatusMsg:  commonconstant.GetMsg(0),
+		Order: &order.OrderResult{
+			OrderId: orderId,
+		},
+	}, nil
 }

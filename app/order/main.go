@@ -2,9 +2,13 @@ package main
 
 import (
 	"net"
+	"tiktok_e-commerce/common/infra/nacos"
+	"tiktok_e-commerce/order/biz/task"
+	"tiktok_e-commerce/order/infra/kafka"
+	"tiktok_e-commerce/order/infra/rpc"
+	"tiktok_e-commerce/order/utils"
 	"time"
 
-	// "tiktok_e-commerce/common/infra/nacos"
 	"tiktok_e-commerce/common/mtl"
 	"tiktok_e-commerce/order/conf"
 	"tiktok_e-commerce/product/biz/dal"
@@ -14,6 +18,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/xxl-job/xxl-job-executor-go"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -23,6 +28,12 @@ func main() {
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
 
 	dal.Init()
+	rpc.InitClient()
+	kafka.Init()
+	utils.InitSnowflake()
+
+	xxljobInit()
+
 	opts := kitexInit()
 
 	svr := orderservice.NewServer(new(OrderServiceImpl), opts...)
@@ -46,9 +57,8 @@ func kitexInit() (opts []server.Option) {
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
 
-	// r := nacos.RegisterService()
-	// opts = append(opts, server.WithRegistry(r))
-
+	r := nacos.RegisterService()
+	opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()
@@ -68,4 +78,26 @@ func kitexInit() (opts []server.Option) {
 		asyncWriter.Sync()
 	})
 	return
+}
+
+func xxljobInit() {
+	exec := xxl.NewExecutor(
+		xxl.ServerAddr(conf.GetConf().XxlJob.XxlJobAddress+"/xxl-job-admin"),
+		xxl.AccessToken(conf.GetConf().XxlJob.AccessToken),
+		xxl.ExecutorIp(conf.GetConf().XxlJob.ExecutorIp),
+		xxl.ExecutorPort("7777"),
+		xxl.RegistryKey("tiktok-e-commerce-order-service"),
+	)
+	exec.Init()
+	server.RegisterShutdownHook(func() {
+		exec.Stop()
+	})
+
+	exec.RegTask("CleanNodeIDTask", task.CleanNodeIDTask)
+	exec.RegTask("CancelOrderTask", task.CancelOrderTask)
+
+	err := exec.Run()
+	if err != nil {
+		return
+	}
 }
