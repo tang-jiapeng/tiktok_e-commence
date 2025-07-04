@@ -23,6 +23,8 @@ type Config struct {
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
+	Kafka    Kafka    `yaml:"kafka"`
+	XxlJob   XxlJob   `yaml:"xxl_job"`
 }
 
 type MySQL struct {
@@ -51,6 +53,20 @@ type Registry struct {
 	RegistryAddress string `yaml:"registry_address"`
 	Username        string `yaml:"username"`
 	Password        string `yaml:"password"`
+}
+
+type Kafka struct {
+	BizKafka BizKafka `yaml:"biz_kafka"`
+}
+
+type BizKafka struct {
+	BootstrapServers []string `yaml:"bootstrap_servers"`
+}
+
+type XxlJob struct {
+	XxlJobAddress string `yaml:"xxl_job_address"`
+	ExecutorIp    string `yaml:"executor_ip"`
+	AccessToken   string `yaml:"access_token"`
 }
 
 // GetConf gets configuration instance

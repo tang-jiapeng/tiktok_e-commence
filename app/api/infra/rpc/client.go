@@ -6,6 +6,7 @@ import (
 	"tiktok_e-commerce/common/clientsuite"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/auth/authservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/cart/cartservice"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/order/orderservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/payment/paymentservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/product/productcatalogservice"
 	"tiktok_e-commerce/rpc_gen/kitex_gen/user/userservice"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 var (
@@ -21,6 +23,7 @@ var (
 	PaymentClient paymentservice.Client
 	ProductClient productcatalogservice.Client
 	CartClient    cartservice.Client
+	OrderClient   orderservice.Client
 	once          sync.Once
 	err           error
 	registryAddr  string
@@ -38,6 +41,8 @@ func InitClient() {
 		initAuthClient()
 		initProductClient()
 		initPaymentClient()
+		initCartClient()
+		initOrderClient()
 	})
 }
 
@@ -73,5 +78,12 @@ func initCartClient() {
 	CartClient, err = cartservice.NewClient("cart-service", commonSuite, client.WithRPCTimeout(3*time.Second))
 	if err != nil {
 		hlog.Fatal("init cart client failed: ", err)
+	}
+}
+
+func initOrderClient() {
+	OrderClient, err = orderservice.NewClient("order-service", commonSuite, client.WithRPCTimeout(3*time.Second))
+	if err != nil {
+		klog.Fatal("init order client failed: ", err)
 	}
 }

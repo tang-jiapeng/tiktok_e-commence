@@ -13,20 +13,28 @@ service OrderService {
 }
 
 message Address {
-  string street_address = 1;
-  string city = 2;
-  string state = 3;
-  string country = 4;
-  int32 zip_code = 5;
+  string name = 1;
+  string phone_number = 2;
+  string province = 3;
+  string city = 4;
+  string region = 5;
+  string detail_address = 6;
+}
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string picture = 4;
+  float price = 5;
+  int32 quantity = 6;
 }
 
 message PlaceOrderReq {
-  uint32 user_id = 1;
-  string user_currency = 2;
-
-  Address address = 3;
-  string email = 4;
-  repeated OrderItem order_items = 5;
+  int32 user_id = 1;
+  Address address = 2;
+  repeated OrderItem order_items = 3;
+  float total_cost = 4;
 }
 
 message OrderItem {
@@ -45,17 +53,16 @@ message PlaceOrderResp {
 }
 
 message ListOrderReq {
-  uint32 user_id = 1;
+  int32 user_id = 1;
 }
 
 message Order {
-  repeated OrderItem order_items = 1;
-  string order_id = 2;
-  uint32 user_id = 3;
-  string user_currency = 4;
-  Address address = 5;
-  string email = 6;
-  int32 created_at = 7;
+  string order_id = 1;
+  Address address = 2;
+  repeated Product products = 3;
+  float cost = 4;
+  string created_at = 5;
+  int32 status = 6;
 }
 
 message ListOrderResp {
@@ -65,7 +72,7 @@ message ListOrderResp {
 }
 
 message MarkOrderPaidReq {
-  uint32 user_id = 1;
+  int32 user_id = 1;
   string order_id = 2;
 }
 

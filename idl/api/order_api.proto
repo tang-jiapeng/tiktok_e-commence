@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package api.order;
+
+option go_package = "api/order";
+
+import "api.proto";
+
+message Order {
+  string order_id = 1;
+  Address address = 2;
+  repeated Product products = 3;
+  float cost = 4;
+  int32 status = 5;
+  string created_at = 6;
+}
+
+message Address {
+  string name = 1;
+  string phone_name = 2;
+  string province = 3;
+  string city = 4;
+  string region = 5;
+  string detail_address = 6;
+}
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string picture = 4;
+  float price = 5;
+  int32 quantity = 6;
+}
+
+message ListOrderRequest {
+}
+
+message ListOrderResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+  repeated Order orders = 3;
+}
+
+service OrderService {
+
+  rpc ListOrder(ListOrderRequest) returns (ListOrderResponse) {
+    option (api.get) = "/order/list";
+  }
+
+}
