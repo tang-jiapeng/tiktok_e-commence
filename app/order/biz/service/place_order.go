@@ -6,8 +6,10 @@ import (
 	"tiktok_e-commerce/order/biz/model"
 	"tiktok_e-commerce/order/infra/kafka/constant"
 	"tiktok_e-commerce/order/infra/kafka/producer"
+	"tiktok_e-commerce/order/infra/rpc"
 	"tiktok_e-commerce/order/utils"
 	order "tiktok_e-commerce/rpc_gen/kitex_gen/order"
+	"tiktok_e-commerce/rpc_gen/kitex_gen/product"
 
 	commonconstant "tiktok_e-commerce/common/constant"
 
@@ -27,6 +29,37 @@ func NewPlaceOrderService(ctx context.Context) *PlaceOrderService {
 func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrderResp, err error) {
 	ctx := s.ctx
 	orderId := utils.GetSnowFlakeID()
+	var productIds []int64
+	for _, item := range req.OrderItems {
+		productIds = append(productIds, int64(item.Item.ProductId))
+	}
+	productListReq := &product.SelectProductListReq{
+		Ids: productIds,
+	}
+	productListResp, err := rpc.ProductClient.SelectProductList(ctx, productListReq)
+	if err != nil {
+		klog.CtxErrorf(ctx, "rpc获取商品信息失败：req: %v, err: %v", productListReq, err)
+		return nil, errors.WithStack(err)
+	}
+	productIdToObj := make(map[int64]*product.Product)
+	for _, productInfo := range productListResp.Products {
+		productIdToObj[productInfo.Id] = productInfo
+	}
+	orderItemList := make([]*model.OrderItem, len(req.OrderItems))
+	for i, item := range req.OrderItems {
+		orderItemList[i] = &model.OrderItem{
+			OrderID: orderId,
+			Cost:    item.Cost,
+			Product: model.Product{
+				ProductID:          item.Item.ProductId,
+				ProductName:        productIdToObj[int64(item.Item.ProductId)].Name,
+				ProductPrice:       productIdToObj[int64(item.Item.ProductId)].Price,
+				ProductPicture:     productIdToObj[int64(item.Item.ProductId)].Picture,
+				ProductDescription: productIdToObj[int64(item.Item.ProductId)].Description,
+			},
+			Quantity: item.Item.Quantity,
+		}
+	}
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
 		newOrder := &model.Order{
 			OrderID:       orderId,
@@ -43,15 +76,7 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		orderItemList := make([]*model.OrderItem, len(req.OrderItems))
-		for i, item := range req.OrderItems {
-			orderItemList[i] = &model.OrderItem{
-				OrderID:   orderId,
-				Cost:      item.Cost,
-				ProductID: item.Item.ProductId,
-				Quantity:  item.Item.Quantity,
-			}
-		}
+
 		err = model.CreateOrderItems(ctx, tx, orderItemList)
 		if err != nil {
 			return errors.WithStack(err)
