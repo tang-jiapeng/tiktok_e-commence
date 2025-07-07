@@ -25,6 +25,12 @@ type Order struct {
 	DetailAddress string  `gorm:"not null;type:varchar(255)"`
 	Status        int32   `gorm:"not null;type:int;default:0"`
 	CreatedAt     time.Time
+	OrderItems    []OrderItem `gorm:"foreignKey:OrderID;references:OrderID"`
+}
+
+type OrderInfo struct {
+	Order
+	orderItems []OrderItem
 }
 
 func (o *Order) TableName() string {
@@ -36,7 +42,10 @@ func CreateOrder(ctx context.Context, db *gorm.DB, order *Order) error {
 }
 
 func GetOrdersByUserId(ctx context.Context, db *gorm.DB, userId int32) (orderList []Order, err error) {
-	err = db.WithContext(ctx).Model(&Order{}).Where(&Order{UserID: userId}).Find(&orderList).Error
+	err = db.WithContext(ctx).Model(&Order{}).
+		Where(&Order{UserID: userId}).
+		Preload("OrderItems").
+		Find(&orderList).Error
 	return
 }
 
@@ -83,6 +92,7 @@ func MarkOrderPaid(ctx context.Context, db *gorm.DB, orderId string) (int64, err
 func GetOrder(ctx context.Context, db *gorm.DB, userId int32, orderId string) (order *Order, err error) {
 	err = db.WithContext(ctx).Model(&Order{}).
 		Where(&Order{UserID: userId, OrderID: orderId}).
+		Preload("OrderItems").
 		First(&order).Error
 	return
 }

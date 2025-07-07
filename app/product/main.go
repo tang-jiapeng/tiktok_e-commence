@@ -2,8 +2,12 @@ package main
 
 import (
 	"net"
+	hotKeyClient "tiktok_e-commerce/common/infra/hot_key_client"
+	"tiktok_e-commerce/common/infra/hot_key_client/constants"
+	"tiktok_e-commerce/product/biz/dal/redis"
 	"tiktok_e-commerce/product/infra/elastic"
 	"tiktok_e-commerce/product/infra/kafka"
+	"tiktok_e-commerce/product/infra/rpc"
 	"tiktok_e-commerce/product/infra/xxl"
 	"time"
 
@@ -29,8 +33,13 @@ func main() {
 	}
 	dal.Init()
 	mtl.InitMetric(conf.GetConf().Kitex.Service, conf.GetConf().Kitex.MetricsPort)
+
+	//启动hotKeyClient
+	go hotKeyClient.Start(redis.RedisClient, constants.ProductService)
+
 	elastic.InitClient()
 	kafka.Init()
+	rpc.InitClient()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)

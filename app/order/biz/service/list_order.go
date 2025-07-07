@@ -35,33 +35,11 @@ func (s *ListOrderService) Run(req *order.ListOrderReq) (resp *order.ListOrderRe
 		}, nil
 	}
 
-	orderIdList := make([]string, len(orderList))
-	for i, o := range orderList {
-		orderIdList[i] = o.OrderID
-	}
-
-	totalOrderItems, err := model.GetOrderItemsByOrderIdList(ctx, mysql.DB, orderIdList)
-	if err != nil {
-		klog.CtxErrorf(ctx, "数据库查询订单商品信息失败, error: %v", err)
-		return nil, errors.WithStack(err)
-	}
-	orderItemsMap := make(map[string][]*model.OrderItem)
-	for _, item := range orderIdList {
-		orderItemsMap[item] = make([]*model.OrderItem, 0)
-	}
-	for _, item := range totalOrderItems {
-		if _, ok := orderItemsMap[item.OrderID]; ok {
-			orderItemsMap[item.OrderID] = append(orderItemsMap[item.OrderID], item)
-		}
-	}
 	orders := make([]*order.Order, len(orderList))
 	for i, o := range orderList {
 		var products []*order.Product
-		orderItems := orderItemsMap[o.OrderID]
-		if orderItems == nil {
-			continue
-		}
-		for _, item := range orderItems {
+
+		for _, item := range o.OrderItems {
 			products = append(products, &order.Product{
 				Id:          item.ProductID,
 				Name:        item.ProductName,

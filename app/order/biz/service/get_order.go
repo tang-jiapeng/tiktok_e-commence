@@ -8,7 +8,6 @@ import (
 	"tiktok_e-commerce/order/biz/model"
 	order "tiktok_e-commerce/rpc_gen/kitex_gen/order"
 
-	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/pkg/errors"
 )
 
@@ -26,14 +25,9 @@ func (s *GetOrderService) Run(req *order.GetOrderReq) (resp *order.GetOrderResp,
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	orderIdList := []string{req.OrderId}
-	orderItems, err := model.GetOrderItemsByOrderIdList(ctx, mysql.DB, orderIdList)
-	if err != nil {
-		klog.CtxErrorf(ctx, "数据库查询订单商品信息失败, error: %v", err)
-		return nil, errors.WithStack(err)
-	}
+
 	var products []*order.Product
-	for _, item := range orderItems {
+	for _, item := range o.OrderItems {
 		products = append(products, &order.Product{
 			Id:          item.ProductID,
 			Name:        item.ProductName,
